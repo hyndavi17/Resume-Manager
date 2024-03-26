@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- Do not enter tags before the composition line since they are ignored by JSF -->
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Resources Videos"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+
+        <div align="center">
+            <h:form id="VideoListForm">
+                <span class="title">Job Seekers Resources Videos</span>
+                <br /><br />
+                <table width="60%" border="0" align="center" cellpadding="5" cellspacing="0">
+                    <tbody>
+                    <tr>
+                        <td valign="middle"><p:graphicImage url="https://i1.ytimg.com/vi/Tt08KmFfIYQ/mqdefault.jpg" width="100px"/> </td>
+                        <td valign="middle">Write an Incredible Resume: 5 Golden Rules!</td>
+                        <td valign="middle">
+                            <p:commandButton value="Play" icon="fas fa-play" styleClass="rounded-button"
+                                             actionListener="#{videoController.setYouTubeVideoId('Tt08KmFfIYQ')}"
+                                             update=":VideoPlayerForm" oncomplete="PF('VideoPlayerDialog').show()" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle"><p:graphicImage url="https://i1.ytimg.com/vi/IV30jAw7dxA/mqdefault.jpg" width="100px"/> </td>
+                        <td valign="middle">How to Answer Behavioral Interview Questions Sample Answers</td>
+                        <td valign="middle">
+                            <p:commandButton value="Play" icon="fas fa-play" styleClass="rounded-button"
+                                             actionListener="#{videoController.setYouTubeVideoId('IV30jAw7dxA')}"
+                                             update=":VideoPlayerForm" oncomplete="PF('VideoPlayerDialog').show()" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle"><p:graphicImage url="https://i1.ytimg.com/vi/B4OhuzwLc9o/mqdefault.jpg" width="100px"/> </td>
+                        <td valign="middle">5 MUST-KNOW LinkedIn Profile Tips for Job Seekers!</td>
+                        <td valign="middle">
+                            <p:commandButton value="Play" icon="fas fa-play" styleClass="rounded-button"
+                                             actionListener="#{videoController.setYouTubeVideoId('B4OhuzwLc9o')}"
+                                             update=":VideoPlayerForm" oncomplete="PF('VideoPlayerDialog').show()" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle"><p:graphicImage url="https://i1.ytimg.com/vi/0a98i0arnw8/mqdefault.jpg" width="100px"/> </td>
+                        <td valign="middle">The Key to Successfully Networking Your Way Into Your Dream Job</td>
+                        <td valign="middle">
+                            <p:commandButton value="Play" icon="fas fa-play" styleClass="rounded-button"
+                                             actionListener="#{videoController.setYouTubeVideoId('0a98i0arnw8')}"
+                                             update=":VideoPlayerForm" oncomplete="PF('VideoPlayerDialog').show()" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle"><p:graphicImage url="https://i1.ytimg.com/vi/Sg-n4hMvd7I/mqdefault.jpg" width="100px"/> </td>
+                        <td valign="middle">3 FOOLPROOF Tips for Writing the PERFECT Cover Letter in 2023 with TOP EXAMPLES!</td>
+                        <td valign="middle">
+                            <p:commandButton value="Play" icon="fas fa-play" styleClass="rounded-button"
+                                             actionListener="#{videoController.setYouTubeVideoId('Sg-n4hMvd7I')}"
+                                             update=":VideoPlayerForm" oncomplete="PF('VideoPlayerDialog').show()" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle"><p:graphicImage url="https://i1.ytimg.com/vi/xOednLGizcs/mqdefault.jpg" width="100px"/> </td>
+                        <td valign="middle">10 Crucial Skills You Need On Your Resume - Resume Writing Tips</td>
+                        <td valign="middle">
+                            <p:commandButton value="Play" icon="fas fa-play" styleClass="rounded-button"
+                                             actionListener="#{videoController.setYouTubeVideoId('xOednLGizcs')}"
+                                             update=":VideoPlayerForm" oncomplete="PF('VideoPlayerDialog').show()" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="middle"><p:graphicImage url="https://i1.ytimg.com/vi/dF9u79KkJZM/mqdefault.jpg" width="100px"/> </td>
+                        <td valign="middle">How to Automate Job Applications</td>
+                        <td valign="middle">
+                            <p:commandButton value="Play" icon="fas fa-play" styleClass="rounded-button"
+                                             actionListener="#{videoController.setYouTubeVideoId('dF9u79KkJZM')}"
+                                             update=":VideoPlayerForm" oncomplete="PF('VideoPlayerDialog').show()" />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </h:form>
+
+        </div>
+
+        <!-- Clicking the Play button displays the included YouTubeVideoPlayer.xhtml file in a dialog box on top of this page. -->
+        <ui:include src="/video/YouTubeVideoPlayer.xhtml"/>
+
+    </ui:define>
+
+</ui:composition>
+<!-- Do not enter tags after the composition line since they are ignored by JSF -->
+
+</html>

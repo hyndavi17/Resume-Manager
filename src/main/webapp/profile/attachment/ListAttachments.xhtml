@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Created by Osman Balci on 2023.9.14
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="#{accountController.signedInUser.username}'s Files"/>
+    </ui:define>
+    <ui:define name="editableContent">
+    <c:if test="#{accountController.userIsSignedIn() == true}">
+            <div align="center">
+                <h:form id="AttachmentListForm">
+                        <p:dataTable id="datalist"
+                                     value="#{attachmentController.listOfAttachments}"
+                                     var="aAttachment"
+                                     widgetVar="userFilesDataTable"
+                                     selectionMode="single"
+                                     selection="#{attachmentController.selected}"
+                                     reflow="true"
+                                     showGridlines="true"
+                                     rowKey="#{aAttachment.id}"
+                                     rowIndexVar="rowNumber">
+
+                            <p:ajax event="rowSelect"
+                                    update="uploadButton downloadButton deleteButton displayButton playButton">
+                                    #{attachmentController.setSelectedRowNumber(rowNumber)};
+                            </p:ajax>
+
+                            <p:ajax event="rowUnselect"
+                                    update="uploadButton downloadButton deleteButton displayButton playButton">
+                            </p:ajax>
+
+                            <!--
+                            =========================================================================
+                            To show the previously selected row when the user comes back to this page
+                            =========================================================================
+                            Step 1: Include the following above:
+
+                                    rowIndexVar="rowNumber"
+                                    first="#{attachmentController.selectedRowNumber}"
+                                        identifies the row number to show when this page reloads
+
+                            Step 2: With <p:ajax event="rowSelect"> above, set the selectedRowNumber
+                                    instance variable by using the setter method.
+
+                            Step 3: Declare the instance variable selectedRowNumber and create the
+                                    getter and setter methods for it in AttachmentController.java.
+                            -->
+
+                            <!--
+                            ********************************
+                            *        FILE ID column        *
+                            ********************************
+                            -->
+                            <p:column sortBy="#{aAttachment.id}" headerText="File Id" style="width:80px;">
+                                <div align="center"><h:outputText value="#{aAttachment.id}"/></div>
+                            </p:column>
+
+                            <!--
+                            ********************************
+                            *     FILE TYPE column     *
+                            ********************************
+                            -->
+                            <p:column headerText="File Type" style="width:80px;">
+                                <div align="center">
+                                    <h:graphicImage class="previewImage"
+                                                    value="#{attachmentController.AttachmentTypeIcon(aAttachment.id)}"/>
+                                </div>
+                            </p:column>
+
+                            <!--
+                            ********************************
+                            *        FILE NAME column      *
+                            ********************************
+                            -->
+                            <p:column sortBy="#{aAttachment.name}" headerText="File Name">
+                                <h:outputText value="#{attachmentController.cleanedAttachmentForAttachmentId(aAttachment.id)}"/>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <div align="center">
+                                    <!--
+                                    ================================
+                                    |      UPLOAD FILE Button      |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="uploadButton" value="Upload Attachment" icon="fas fa-upload"
+                                                     styleClass="rounded-button"
+                                                     action="/profile/attachment/UploadFile.xhtml"
+                                                     disabled="#{!attachmentController.canUpload}"
+                                                     ajax="false"/>
+                                    &nbsp;
+                                    <!--
+                                    ================================
+                                    |     DOWNLOAD FILE Button     |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="downloadButton" value="Download File" icon="fas fa-download"
+                                                     styleClass="rounded-button"
+                                                     ajax="false" disabled="#{empty attachmentController.selected}">
+
+                                        <p:fileDownload value="#{fileDownloadManager.file}"/>
+                                    </p:commandButton>
+                                    &nbsp;
+                                    <!--
+                                    ***************************************************
+                                    Display a Confirmation dialog for the DELETE button
+                                    ***************************************************
+                                    -->
+                                    <!--
+                                    ================================
+                                    |      DELETE FILE Button      |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="deleteButton" value="Delete File" icon="fas fa-trash-alt"
+                                                     styleClass="rounded-button"
+                                                     actionListener="#{attachmentController.deleteSelectedAttachment()}"
+                                                     update=":AttachmentListForm" ajax="true"
+                                                     disabled="#{empty attachmentController.selected}">
+
+                                        <p:confirm header="Deletion Confirmation"
+                                                   message="Are you sure you want to permanently delete the selected file from the database?"/>
+                                    </p:commandButton>
+
+                                    <p:confirmDialog id="confirmDialogBox" global="true" showEffect="fade"
+                                                     hideEffect="fade" responsive="true" width="350">
+                                        <div align="center">
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no"
+                                                             icon="fas fa-window-close"/>
+                                            &nbsp;
+                                            <p:commandButton value="Yes" type="button"
+                                                             class="ui-confirmdialog-yes ui-button-danger"
+                                                             icon="fas fa-check-square"/>
+                                        </div>
+                                    </p:confirmDialog>
+                                    <!--
+                                    ************************************************
+                                    End of Display of the DELETE Confirmation dialog
+                                    ************************************************
+                                    -->
+                                    &nbsp;
+                                    <!--
+                                    ================================
+                                    |     DISPLAY FILE Button      |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="displayButton" value="Display File" icon="fas fa-file-alt"
+                                                     styleClass="rounded-button"
+                                                     action="/profile/attachment/DisplayFile?faces-redirect=true"
+                                                     ajax="false" disabled="#{empty attachmentController.selected}"/>
+                                    &nbsp;
+                                    <!--
+                                    ================================
+                                    |    PLAY VIDEO FILE Button    |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="playButton" value="Play Video File" icon="fas fa-play"
+                                                     styleClass="rounded-button"
+                                                     action="/profile/attachment/PlayVideo?faces-redirect=true"
+                                                     ajax="false" disabled="#{empty attachmentController.selected}"/>
+                                    &nbsp;
+                                    <p:commandButton id="backButton" value="Go Back" icon="fas fa-arrow-left"
+                                                     styleClass="rounded-button"
+                                                     action="/profile/profile.xhtml?faces-redirect=true"
+                                                     ajax="false"/>
+
+                                </div>
+                            </f:facet>
+                        </p:dataTable>
+                </h:form>
+            </div>
+    </c:if>
+    </ui:define>
+</ui:composition>
+<!-- Do not enter tags after the composition line since they are ignored by JSF -->
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  - Created by Osman Balci on 2023.9.23 aad Yoseph Berhanu Alebachew on 2023.9.24
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core">
+
+<ui:composition>
+    <!--
+    =================================================================
+    |  Clicking the EDIT button in List.xhtml displays this Dialog  |
+    |  window for the user to update the selected account's data.   |
+    =================================================================
+    -->
+
+    <p:dialog id="TemplateCreateDlg" header="Create Template" widgetVar="TemplateCreateDialog"
+              modal="true" position="center" appendTo="@(body)" width="80%" height="800"
+              showEffect="slide" hideEffect="fade" responsive="true">
+        <!--
+        Various effect options can be used when showing and closing the dialog.
+        Use showEffect and hideEffect options to apply these effects:
+            blind, bounce, clip, drop, explode, fade, fold, highlight, puff,
+            pulsate, scale, shake, size, slide and transfer. [PrimeFaces Documentation]
+        -->
+
+        <!-- class="ui-datatable-data" in siteStyles reduces row paddings -->
+        <h:form id="TemplateCreateForm" >
+            <!--
+             ******************************
+             *   Create Template Proposal  *
+             ******************************
+            -->
+            <div class="row">
+                <div class="col-25">
+                    <p:outputLabel for="name">Name</p:outputLabel>
+                </div>
+                <div class="col-75">
+                    <p:inputText type="text" id="name" name="name" placeholder="Enter template name " value="#{templatesController.selected.name}"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-25">
+                    <p:outputLabel >Content</p:outputLabel>
+                </div>
+                <div class="col-75">
+                    <p:inputTextarea contentType="text/html" id="content" value="#{templatesController.selected.content}" height="400" secure="false" allowFormatting="false"
+                            allowBlocks="true" allowStyles="false" allowImages="false" allowLinks="false" style="html" />
+                </div>
+            </div>
+
+            <br />
+            <div class="row">
+
+                <div class="col-25">
+                </div>
+                <div class="col-75">
+                    <!--
+                    ================================
+                    |        SUBMIT Button         |
+                    ================================
+                    -->
+                    <p:commandButton id="editAccount" value="Update" icon="fas fa-arrow-up" styleClass="rounded-button"
+                                     ajax="false" action="#{templatesController.update()}"/>
+                    &nbsp;&nbsp;
+                    <!--
+                    ================================
+                    |        CANCEL Button         |
+                    ================================
+                    -->
+                    <p:button outcome="/admin/templates/list" value="Cancel" icon="fas fa-ban" styleClass="ui-button-outlined"/>
+                </div>
+            </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>
+</html>

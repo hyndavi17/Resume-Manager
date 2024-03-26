@@ -1,0 +1,220 @@
+
+
+@import url('google-font.css');
+input[type=text],input[type=email],input[type=password], select, textarea, ul.ui-inputfield{
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+label.ui-outputlabel {
+    float: right;
+    font-weight: bold;
+}
+div.ui-selectonemenu, span.p-datepicker{
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+    float:left;
+}
+label {
+    padding: 12px 12px 12px 0;
+    display: inline-block;
+}
+
+input[type=submit] {
+    background-color: #04AA6D;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+}
+input[type=submit]:hover {
+    background-color: #45a049;
+}
+svg.fa-pencil {
+    position: absolute;
+    top: -2em;
+    right: 0;
+    background-color: transparent ;
+    color: #0d89ec;
+    border: none;
+}
+svg.fa-pencil:hover{
+    background-color: transparent ;
+    color: #0d89ec;
+    border: none;
+}
+svg.fa-pen-to-square {
+    position: absolute;
+    top: -2em;
+    right: 0;
+    background-color: transparent ;
+    color: #0d89ec;
+    border: none;
+}
+svg.fa-pen-to-square :hover{
+    background-color: transparent ;
+    color: #0d89ec;
+    border: none;
+}
+svg.fa-trash {
+    position: absolute;
+    top: -2em;
+    right: 2em;
+    background-color: transparent ;
+    color: #c40000;
+    border: none;
+}
+svg.fa-trash:hover{
+    background-color: transparent ;
+    color: #c40000;
+    border: none;
+}
+.center {
+    background-color: lightblue;
+    padding: 1em;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+.container {
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    padding: 2em;
+    width: 80%;
+}
+
+.col-50 {
+    float: left;
+    width: 50%;
+    margin-top: 6px;
+}
+
+.col-60 {
+    float: left;
+    width: 60%;
+    margin-top: 6px;
+}
+.col-40 {
+    float: left;
+    width: 40%;
+    margin-top: 6px;
+}
+
+.col-25 {
+    float: left;
+    width: 25%;
+    margin-top: 6px;
+}
+
+.col-75 {
+    float: left;
+    width: 75%;
+    margin-top: 6px;
+}
+/* Clear floats after the columns */
+.row::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+.education-year  > label.ui-outputlabel {
+    !important;
+}
+.profile-pic {
+    color: transparent;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+.profile-pic input {
+    display: none;
+}
+.profile-pic img {
+    object-fit: cover;
+    width: 165px;
+    height: 165px;
+    box-shadow: 0 0 10px 0 rgba(255, 255, 255, 0.35);
+    border-radius: 100px;
+    z-index: 0;
+}
+.profile-pic .-label {
+    cursor: pointer;
+    height: 165px;
+    width: 165px;
+}
+.profile-pic:hover .-label {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 10000;
+    color: #fafafa;
+    transition: background-color 0.2s ease-in-out;
+    border-radius: 100px;
+    margin-bottom: 0;
+}
+.profile-pic span {
+    display: inline-flex;
+    padding: 0.2em;
+    height: 2em;
+    float: right;
+    margin-top: 0.2em;
+}
+.project-badge.status-preparation {
+    background: #c8e6c9;
+    color: #256029;
+}
+
+.project-badge {
+    border-radius: 2px;
+    padding: 0.25em 0.5rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: .3px;
+}
+
+.project .project-date-icon {
+    vertical-align: middle;
+    margin-right: 0.5rem;
+}
+.project .project-date {
+    font-weight: 600;
+    vertical-align: middle;
+}
+.edit-buttons{
+    visibility: collapse
+}
+.project:hover .edit-buttons{ visibility:visible}
+
+@media screen and (min-width: 1200px) {
+    .container {
+        width: 50%;
+    }
+}
+@media only screen and (max-width: 800px) {
+    .col-25, .col-40, .col-50,.col-60, .col-75, input[type=submit] {
+        width: 100%;
+        margin-top: 0;
+    }
+    label.ui-outputlabel {
+        float: left;
+    }
+    .education-year > label.ui-outputlabel {
+        display: none;
+    }
+    .container {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 2em;
+        width: 95%;
+    }
+}

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  - Created by Osman Balci on 2023.9.14
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Edit Account"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{accountController.userIsSignedIn()}">
+        <div align="center">
+            <h:form id="EditAccountForm"  class="container" >
+                <h1>Edit Account</h1>
+                <!--
+                 **************************
+                 *   Create User Account  *
+                 **************************
+                -->
+                <p:fieldset id="accountInfoGroup" legend="Account Infomation" toggleable="true" toggleSpeed="500">
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="email">Email</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:inputText type="email" id="email" name="email" placeholder="Enter your email " value="#{accountController.account.email}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="username">Username</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:inputText type="text" id="username" name="username" placeholder="Enter your prefered username.." value="#{accountController.account.username}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="securityQuestion">Security Question</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:selectOneMenu id="securityQuestion" value="#{accountController.account.securityQuestion}">
+
+                                <!--
+                                List of security questions is displayed for the user to select one.
+                                The first security question is selected as the default.
+                                -->
+                                <f:selectItems value="#{accountController.securityQuestions}"/>
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="securityAnswer">Security Answer</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:inputMask id="securityAnswer" value="#{accountController.account.securityAnswer}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                        </div>
+                        <div class="col-75">
+                            <p:commandButton id="editPassword" value="Edit Password"   styleClass="rounded-button"
+                                             actionListener="#{accountController.togglePassword()}"
+                                             rendered="#{!accountController.editPassword}" update="EditAccountForm"/>
+                        </div>
+                    </div>
+                </p:fieldset>
+                <c:if test="#{accountController.editPassword}">
+                <p:fieldset id="passwordGroup" legend="Edit Password" toggleable="true" toggleSpeed="500">
+
+                        <div class="row">
+                            <div class="col-25">
+                                <p:outputLabel for="oldpassword">Current Password</p:outputLabel>
+                            </div>
+                            <div class="col-75">
+                                <p:password type="password" id="oldpassword" name="oldpassword" placeholder="Enter your current prefered password.." value="#{accountController.oldPassword}"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25">
+                                <p:outputLabel for="password" value="New Password">
+                                    <p:tooltip for="password"
+                                               value="Enter 8 to 32 characters with at least 1: capital letter, lowercase letter, number, and special character above the numbers on the keyboard."
+                                               showEffect="clip" hideEffect="explode" position="top"/>
+                                </p:outputLabel>
+                            </div>
+                            <div class="col-75">
+                                <p:password type="password" id="password" name="password" placeholder="Enter your prefered password.." value="#{accountController.password}">
+                                    <!--
+                                        Execute the "validate" method in the "PasswordValidator.java"
+                                        class file to validate the password entered.
+                                        -->
+                                    <f:validator validatorId="passwordValidator"/>
+                                </p:password>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25">
+                                <p:outputLabel for="confirmPassword">Confirm Password</p:outputLabel>
+                            </div>
+                            <div class="col-75">
+                                <p:password type="password" id="confirmPassword" name="confirmPassword" placeholder="Enter your prefered password.." value="#{accountController.confirmPassword}">
+
+                                </p:password>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25"></div>
+                            <div class="col-75">
+                                <p:commandButton
+                                        value="Cancel"
+                                        update="EditAccountForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                                        actionListener="#{accountController.togglePassword()}"
+                                />
+                                &nbsp;
+                            </div>
+                        </div>
+                </p:fieldset>
+                </c:if>
+                <!--
+                *********************************
+                *   TWO-FACTOR AUTHENTICATION   *
+                *********************************
+                -->
+                <p:fieldset id="twoFAgroup" legend="Two-Factor Authentication" toggleable="true" toggleSpeed="500">
+                    <div class="row">
+                        <div class="col-50">
+                            <p:outputLabel value="Two-Factor Authentication via Email:" for="twoFAEmail"/>
+                        </div>
+                        <div class="col-50">
+                            <p:toggleSwitch id="twoFAEmail" value="#{accountController.twoFAonViaEmail}">
+                                <p:ajax update="twoFAgroup"/>
+                            </p:toggleSwitch>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-50">
+                            <p:outputLabel value="Two-Factor Authentication via SMS:" for="twoFASMS"/>
+                        </div>
+                        <div class="col-50">
+                            <p:toggleSwitch id="twoFASMS" value="#{accountController.twoFAonViaSMS}">
+                                <p:ajax update="twoFAgroup"/>
+                            </p:toggleSwitch>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel value="Cell Phone Number:" for="cellPhoneNumber"/>
+                        </div>
+                        <div class="col-75">
+                            <p:inputMask id="cellPhoneNumber" mask="(999) 999-9999"
+                                         value="#{accountController.account.cellPhoneNumber}" disabled="#{!accountController.twoFAonViaSMS}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel value="Cell Phone Carrier:" for="carrier"/>
+                        </div>
+                        <div class="col-75">
+                            <!--
+                                All major U.S. wireless carriers offer both Short Message Service (SMS) gateway
+                                and Multimedia Messaging Service (MMS) gateway.
+
+                                Carrier	            SMS Gateway Domain	                MMS Gateway Domain
+                                AT&T	            number@txt.att.net	                number@mms.att.net
+                                Boost Mobile	    number@sms.myboostmobile.com	    number@myboostmobile.com
+                                Cricket Wireless	number@mms.cricketwireless.net	    number@mms.cricketwireless.net
+                                Google Project Fi	number@msg.fi.google.com	        number@msg.fi.google.com
+                                Republic Wireless	number@text.republicwireless.com	None
+                                Sprint	            number@messaging.sprintpcs.com	    number@pm.sprint.com
+                                Straight Talk	    number@vtext.com	                number@mypixmessages.com
+                                T-Mobile	        number@tmomail.net	                number@tmomail.net
+                                Ting	            number@message.ting.com	None
+                                Tracfone	        Depends on underlying carrier	    number@mmst5.tracfone.com
+                                U.S. Cellular	    number@email.uscc.net	            number@mms.uscc.net
+                                Verizon	            number@vtext.com	                number@vzwpix.com
+                                Virgin Mobile	    number@vmobl.com	                number@vmpix.com
+                                Xfinity Mobile      number@vtext.com                    number@mypixmessages.com
+
+                                SMS message is restricted to be no more than 160 characters.
+                                MMS has no restriction. Therefore, we will use MMS.
+
+                                Specify the email address to send the email message containing the text message as
+
+                                    10-digit Cell Phone Number@CellPhoneCarrier's MMS gateway domain
+
+                                The designated cell phone number will be charged for the text messaging by its carrier.
+
+                                When the email message is sent to the cell phone number @ the MMS gateway domain,
+                                the message is automatically sent to the cell phone as an MMS text message by the
+                                domain and the carrier charges the cell phone number for the text messaging.
+                                -->
+
+                            <p:selectOneMenu id="carrier" value="#{accountController.cellPhoneCarrier}" disabled="#{!accountController.twoFAonViaSMS}">
+
+                                <f:selectItem itemLabel="Select a Carrier"  itemValue="" noSelectionOption="true"/>
+                                <f:selectItem itemLabel="AT&amp;T Mobility" itemValue="mms.att.net" />
+                                <f:selectItem itemLabel="Boost Mobile"      itemValue="myboostmobile.com" />
+                                <f:selectItem itemLabel="Consumer Cellular" itemValue="mailmymobile.com" />
+                                <f:selectItem itemLabel="Cricket Wireless"  itemValue="mms.cricketwireless.net" />
+                                <f:selectItem itemLabel="Google Project Fi" itemValue="msg.fi.google.com" />
+                                <f:selectItem itemLabel="Sprint"            itemValue="pm.sprint.com" />
+                                <f:selectItem itemLabel="Straight Talk"     itemValue="mypixmessages.com" />
+                                <f:selectItem itemLabel="T-Mobile"          itemValue="tmomail.net" />
+                                <f:selectItem itemLabel="Tracfone"          itemValue="mmst5.tracfone.com" />
+                                <f:selectItem itemLabel="U.S. Cellular"     itemValue="mms.uscc.net" />
+                                <f:selectItem itemLabel="Verizon"           itemValue="vzwpix.com" />
+                                <f:selectItem itemLabel="Virgin Mobile"     itemValue="vmpix.com" />
+                                <f:selectItem itemLabel="Xfinity Mobile"    itemValue="mypixmessages.com" />
+
+                            </p:selectOneMenu>
+                        </div>
+                    </div>
+                </p:fieldset>
+                <br /><br />
+                <!--
+                ================================
+                |        SUBMIT Button         |
+                ================================
+                -->
+                <p:commandButton id="save" value="Save" icon="fas fa-arrow-up" styleClass="rounded-button"
+                                 ajax="false" action="#{accountController.updateAccount()}"/>
+                &nbsp;&nbsp;
+                <!--
+                ================================
+                |        CANCEL Button         |
+                ================================
+                -->
+                <p:button outcome="/account/view" value="Cancel" icon="fas fa-ban" styleClass="ui-button-outlined"/>
+            </h:form>
+        </div>
+        </c:if>
+        <c:if test="#{!accountController.userIsSignedIn()}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Created by Osman Balci on 2023.9.14
+  - Modified by Hyndavi Venkatreddygari, Sai Nikhita Nayani, Yoseph Alebachew 2023.11.12
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="jakarta.faces.facelets"
+  xmlns:h="jakarta.faces.html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="jakarta.faces.core"
+  xmlns:c="jakarta.tags.core"
+>
+  <!-- This page is constructed based on the siteTemplate -->
+  <ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="editableContent">
+      <c:if test="#{accountController.userIsAdmin()}">
+        <ui:define name="title">
+          <!-- Set the page title -->
+          <h:outputText value="Resume Template" />
+        </ui:define>
+        <!-- In case of JSF validation error, set 'selected' to null in templatesController -->
+        <c:if test="#{facesContext.validationFailed}">
+          ${templatesController.unselect()}
+        </c:if>
+
+        <!-- Set 'selected' to null in templatesController when the user refreshes / reloads this JSF page -->
+        <div align="center">
+          <h:form id="TemplatelListForm" style="width: 60%">
+            <p:panel header="List of Resume Templates">
+              <p:dataTable
+                id="datalist"
+                value="#{templatesController.listOfTemplates}"
+                var="aTemplate"
+                widgetVar="templatesDataTable"
+                editable="true"
+                editMode="cell"
+                selectionMode="single"
+                selection="#{templatesController.selected}"
+                reflow="true"
+                showGridlines="true"
+                paginator="true"
+                rows="10"
+                rowKey="#{aTemplate.id}"
+                emptyMessage="No template found for the search query entered!"
+              >
+                <!--
+                *********************
+                *   Template Name   *
+                *********************
+                -->
+                <p:column headerText="Name" style="width: 100px; text-align: center; vertical-align: top" >
+                  <p:outputLabel>#{aTemplate.name}</p:outputLabel>
+                </p:column>
+
+                <!--
+                *********************
+                *      userame      *
+                *********************
+                -->
+                <p:column headerText="Action" style="width: 80px; text-align: center; vertical-align: top" >
+                  <p:commandButton
+                    value="" icon="fas fa-pencil" actionListener="#{templatesController.setSelected(aTemplate)}" oncomplete="PF('TemplateEditDialog').show()"
+                    update="TemplateEditForm,:TemplatelListForm:datalist,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    style="color: #256029; border: none" styleClass="ui-button-outlined" />
+                  &nbsp;
+                  <p:commandButton value="" icon="fas fa-eye" actionListener="#{templatesController.setSelected(aTemplate)}"
+                    oncomplete="PF('TemplateViewDialog').show()" update="TemplateViewForm,:TemplatelListForm:datalist,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    style="color: #0d89ec; border: none" styleClass="ui-button-outlined" />
+                  &nbsp;
+                  <p:commandButton value="" icon="fas fa-trash" actionListener="#{templatesController.destroy(aTemplate)}"
+                                   update=":TemplatelListForm:datalist,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                                   style="color: firebrick; border: none" styleClass="ui-button-outlined" >
+                    <p:confirm header="Deletion Confirmation" message="Are you sure you want to permanently delete the selected template #{aTemplate.name} from the database?" />
+                  </p:commandButton>
+                  <p:confirmDialog id="confirmDialogBox" global="true" showEffect="fade" hideEffect="fade" responsive="true" width="350" >
+                    <div align="center">
+                      <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fas fa-window-close" />
+                      &nbsp;
+                      <p:commandButton value="Yes" type="button" class="ui-confirmdialog-yes ui-button-danger" icon="fas fa-check-square" />
+                    </div>
+                  </p:confirmDialog>
+                </p:column>
+              </p:dataTable>
+            </p:panel>
+          </h:form>
+          <div class="row">
+            <!-- CREATE button: id is used since it is referenced to be activated or deactivated -->
+            <p:commandButton
+              id="createButton"
+              value="Create"
+              icon="fas fa-plus"
+              styleClass="rounded-button"
+              actionListener="#{templatesController.prepareCreate()}"
+              update=":TemplateCreateForm"
+              oncomplete="PF('TemplateCreateDialog').show()"
+            />
+          </div>
+        </div>
+        <!-- Clicking the Create button displays the included Create.xhtml file in a dialog window on top of this page. -->
+        <ui:include src="/admin/templates/create.xhtml" />
+
+        <!-- Clicking the Edit button displays the included Edit.xhtml file in a dialog window on top of this page. -->
+        <ui:include src="/admin/templates/edit.xhtml" />
+        <!-- Clicking the Edit button displays the included Edit.xhtml file in a dialog window on top of this page. -->
+        <ui:include src="/admin/templates/view.xhtml" />
+      </c:if>
+    </ui:define>
+    <c:if test="#{!accountController.userIsEmployee()}">
+      <div align="center">
+        <h1>Cybercriminal Activity is Detected and Rejected!</h1>
+      </div>
+    </c:if>
+  </ui:composition>
+</html>

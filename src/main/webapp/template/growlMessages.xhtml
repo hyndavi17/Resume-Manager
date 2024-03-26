@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition>
+    <!-- Display informational messages for 5 seconds and fade away (1 second = 1000 milliseconds) -->
+    <p:growl id="growlInfoMessage" severity="info" showDetail="true" life="5000" />
+
+    <!-- Display warning messages with no time duration and let the user close it by clicking the message box -->
+    <p:growl id="growlWarningMessage" severity="warn" showDetail="true" sticky="true" />
+
+    <!-- Display error messages for 10 seconds and fade away -->
+    <p:growl id="growlErrorMessage" severity="error" showDetail="false" life="10000" />
+
+    <!-- Display fatal error messages for 10 seconds and fade away -->
+    <p:growl id="growlFatalMessage" severity="fatal" showDetail="true" life="10000" />
+</ui:composition>
+</html>

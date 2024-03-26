@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Created by Osman Balci on 2023.9.23 aad Yoseph Berhanu Alebachew on 2023.9.24
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core" >
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="My Proposals"/>
+    </ui:define>
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent" >
+        <c:if test="#{accountController.userIsManager()}">
+            <!-- In case of JSF validation error, set 'selected' to null in projectsController -->
+            <c:if test="#{facesContext.validationFailed}">
+                ${projectsController.unselect()}
+            </c:if>
+
+            <div align="center" style="padding-left: 3em; padding-right: 3em">
+                <h:form id="EmployeeListForm">
+                    <p:panel header="List of Employee Profiles">
+                        <p:dataTable id="datalist"
+                                     value="#{projectsController.listOfProfiles}"
+                                     var="aProfile"
+                                     widgetVar="profileDataTable"
+                                     editable="false"
+                                     reflow="true"
+                                     showGridlines="true"
+                                     paginator="true"
+                                     rows="10"
+                                     emptyMessage="No profile found for the search query entered!" >
+
+                            <!--
+                            *************************
+                            *   Data Table Header   *
+                            *************************
+                            -->
+                            <f:facet name="header">
+                                <div align="center">
+                                    <p:inputText id="globalFilter" onkeyup="PF('profileDataTable').filter()" filterMatchMode="contains"
+                                                 style="width: 250px"
+                                                 placeholder="Enter Global Search Query" />
+                                    &nbsp;
+                                    <p:commandButton type="button" value="Clear All Filters" styleClass="ui-button-outlined"
+                                                     icon="fas fa-undo" onclick="PF('profileDataTable').clearFilters()" />
+                                </div>
+                            </f:facet>
+                            <!--
+                            *********************
+                            *   Profile Photo   *
+                            *********************
+                            -->
+                            <p:column headerText="Photo" style="width: 250px; text-align: center; vertical-align: top">
+                                <img src="#{aProfile.profilePicture}"
+                                     alt="Profile Photo" width="80px" />
+                            </p:column>
+
+                            <!--
+                            *********************
+                            *        Name       *
+                            *********************
+                            -->
+                            <p:column headerText="Name" sortBy="#{aProfile.fullName}"
+                                      filterBy="#{aProfile.fullName}" filterMatchMode="contains"
+                                      style="width: 180px; text-align: center; vertical-align: top">
+                                <h:outputText value="#{aProfile.fullName}"/>
+                            </p:column>
+                            <!--
+                            ****************
+                            *    Skills    *
+                            ****************
+                            -->
+                            <p:column headerText="Summary" style="width: 360px; text-align: center; vertical-align: top"
+                                      filterBy="#{aProfile.summary}" filterMatchMode="contains">
+                                <h:outputText value="#{aProfile.summary}" styleClass="scrollableTextBox" />
+                            </p:column>
+
+                            <!--
+                            ****************
+                            *    Skills    *
+                            ****************
+                            -->
+                            <p:column headerText="Skills" style="width: 260px; text-align: center; vertical-align: top"
+                                      filterBy="#{aProfile.skillNames}" filterMatchMode="contains">
+                                <h:outputText value="#{aProfile.skillNames}" styleClass="scrollableTextBox" />
+                            </p:column>
+
+                            <p:column headerText="Action">
+                                <p:commandButton icon="pi pi-plus"
+                                                 ajax="false"
+                                                 actionListener="#{projectsController.addProfile(aProfile)}"
+                                                 rendered="#{!projectsController.has(aProfile.id)}"
+                                                 update=":EmployeeListForm" styleClass="ui-button-success" />
+                                &nbsp;
+                                <p:commandButton icon="pi pi-eye" title="View"
+                                                 actionListener="#{projectsController.viewProfile(aProfile.id)}" styleClass="ui-button-secondary"
+                                                 update=":ProfileViewForm" oncomplete="PF('ProfileViewDialog').show()" />
+                                &nbsp;
+                                <p:commandButton icon="pi pi-trash"
+                                                 ajax="false"
+                                                 actionListener="#{projectsController.removeProfile(aProfile)}"
+                                                 rendered="#{projectsController.has(aProfile.id)}"
+                                                 update=":EmployeeListForm" styleClass="ui-button-danger" />
+
+                            </p:column>
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+                <div class="row">
+                    <!-- CREATE button: id is used since it is referenced to be activated or deactivated -->
+                    <p:button outcome="/projects/view" value="Back To Project (#{projectsController.selected.name})" icon="fas fa-ban" styleClass="ui-button-outlined"/>
+
+                </div>
+            </div>
+            <!-- Clicking the View button displays the included View.xhtml file in a dialog window on top of this page. -->
+            <ui:include src="/projects/employees/view.xhtml"/>
+        </c:if>
+        <c:if test="#{!accountController.userIsManager()}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+
+    <!-- This page is constructed based on the siteTemplate -->
+    <ui:composition template="/template/siteTemplate.xhtml">
+        <ui:define name="title">
+            <!-- Set the page title -->
+            <h:outputText value="Session Expired" />
+        </ui:define>
+
+        <!-- Create the content for this page below -->
+        <ui:define name="editableContent">
+            <br/><br/><br/>
+            <div align="center">
+                <h1>Your Session has Expired!</h1>
+            </div>
+            <br/><br/><br/>
+        </ui:define>
+    </ui:composition>
+</html>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="jakarta.tags.core">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Jobs API Search Results"/>
+    </ui:define>
+
+    <ui:define name="editableContent">
+
+        <!-- In case of JSF validation error, set 'selected' to null in countryApiController -->
+        <c:if test="#{facesContext.validationFailed}">
+            ${jobsApiController.unselect()}
+        </c:if>
+
+        <!-- Set 'selected' to null in countryApiController when the user refreshes / reloads this JSF page -->
+        <f:metadata>
+            <f:viewAction action="#{jobsApiController.unselect()}" rendered="#{facesContext.postback}"/>
+        </f:metadata>
+
+        <div align="center">
+            <h:form id="ResultsListForm">
+                <p:panel header="Jobs API Search Results">
+                    <p:dataTable id="datalist"
+                                 value="#{jobsApiController.listOfJobsFound}"
+                                 var="aJob"
+                                 widgetVar="jobsApiDataTable"
+                                 selectionMode="single"
+                                 selection="#{jobsApiController.selected}"
+                                 reflow="true"
+                                 showGridlines="true"
+                                 paginator="true"
+                                 rowKey="#{aJob.url}"
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10,20,30,50,70,90"
+                                 emptyMessage="No job openings found for the search query entered!">
+
+                        <p:ajax event="rowSelect" update="viewButton"/>
+                        <p:ajax event="rowUnselect" update="viewButton"/>
+                        <f:facet name="header">
+                            <div align="center">
+                                <p:inputText id="globalFilter" onkeyup="PF('jobsApiDataTable').filter()"
+                                             filterMatchMode="contains" style="width: 250px"
+                                             placeholder="Enter Global Search Query"
+                                />
+                                &nbsp;
+                                <p:commandButton type="button" value="Clear All Filters" styleClass="ui-button-outlined"
+                                                 icon="fas fa-undo" onclick="PF('jobsApiDataTable').clearFilters()"/>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="Job Title" sortBy="#{aJob.title}"
+                                  style="vertical-align: top">
+                            <h:outputText value="#{aJob.title}" styleClass="scrollableTextBox"/>
+                        </p:column>
+
+                        <p:column headerText="Location" sortBy="#{aJob.location}"
+                                  style="vertical-align: top">
+                            <h:outputText value="#{aJob.location}" styleClass="scrollableTextBox"/>
+                        </p:column>
+
+
+                        <p:column headerText="Organization" sortBy="#{aJob.organizationName}"
+                                  style="text-align: right; vertical-align: top">
+                            <h:outputText value="#{aJob.organizationName}" styleClass="scrollableTextBox">
+                                <!-- Insert commas into population number as thousands separators -->
+                            </h:outputText>
+                        </p:column>
+
+
+<!--                        <p:column headerText="Position Schedule" sortBy="#{aJob.positionSchedule}"-->
+<!--                                  style="text-align: right; vertical-align: top">-->
+<!--                            <h:outputText value="#{aJob.positionSchedule}" styleClass="scrollableTextBox">-->
+<!--                            </h:outputText>-->
+<!--                        </p:column>-->
+
+
+<!--                        <p:column headerText="Position Type" sortBy="#{aJob.positionType}"-->
+<!--                                  style="vertical-align: top">-->
+<!--                            <h:outputText value="#{aJob.positionType}" styleClass="scrollableTextBox"/>-->
+<!--                        </p:column>-->
+
+
+                        <p:column headerText="Position Start Date" sortBy="#{aJob.startDate}"
+                                  style="vertical-align: top">
+                            <h:outputText value="#{aJob.startDate}" styleClass="scrollableTextBox" />
+                        </p:column>
+
+
+                        <p:column headerText="Position End Date" sortBy="#{aJob.startDate}" style="text-align: left; vertical-align: top">
+                            <h:outputText value="#{aJob.endDate}" styleClass="scrollableTextBox" />
+                        </p:column>
+
+                        <p:column headerText="Application Link"
+                                  style="vertical-align: top">
+                            <a href="#{aJob.url}" target="_blank">Apply</a>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <div align="center">
+                                <!-- ADD button -->
+
+                                <!-- VIEW button: id is used since it is referenced to be activated or deactivated -->
+                                <p:commandButton id="viewButton" value="View" icon="fas fa-eye" styleClass="rounded-button"
+                                                 update=":ApiViewDlg" oncomplete="PF('ApiViewDialog').show()"
+                                                 disabled="#{empty jobsApiController.selected}"/>
+                                &nbsp;
+                                <!-- GO BACK button -->
+                                <p:button id="backButton" icon="fas fa-arrow-left" styleClass="ui-button-outlined"
+                                          onclick="PF('JobSearchDialog').show();return false;" value="Go Back"/>
+                            </div>
+                        </f:facet>
+                    </p:dataTable>
+                </p:panel>
+            </h:form>
+        </div>
+
+        <!--
+        ==========================================================
+        |  Clicking the VIEW button in List.xhtml displays this  |
+        |  Dialog window showing the selected country's data.    |
+        ==========================================================
+        height="400" makes the dialog window to be vertically scrollable
+        width="60%" and responsive="true" make the dialog window horizontally responsive
+        class="scalableImage" makes the displayed image responsive
+        -->
+        <p:dialog id="ApiViewDlg" header="#{jobsApiController.selected.title}"
+                  widgetVar="ApiViewDialog"
+                  modal="true" position="center" appendTo="@(body)" width="60%" height="500"
+                  showEffect="slide" hideEffect="fade" responsive="true">
+            <!--
+            Various effect options can be used when showing and closing the dialog.
+            Use showEffect and hideEffect options to apply these effects:
+                blind, bounce, clip, drop, explode, fade, fold, highlight, puff,
+                pulsate, scale, shake, size, slide and transfer. [PrimeFaces Documentation]
+            -->
+            <h:form id="ApiViewForm" class="ui-datatable-data">
+                <div align="center">
+                    <!--
+                    We define the local variable countryCode and use it below as a method parameter.
+                    The local variable's value is set by the EL expression during view build time.
+                    -->
+
+
+                    <br/><br/>
+                    <h:panelGroup id="display">
+                        <p:panelGrid columns="2" columnClasses="panelGridColumn1, panelGridColumn2"
+                                     rendered="#{jobsApiController.selected != null}">
+
+                            <h:outputText value="Job Title:"/>
+                            <h:outputText value="#{jobsApiController.selected.title}"/>
+
+                            <h:outputText value="Organization:"/>
+                            <h:outputText value="#{jobsApiController.selected.organizationName}"/>
+
+                            <h:outputText value="Location:"/>
+                            <h:outputText value="#{jobsApiController.selected.location}"/>
+
+                            <h:outputText value="URl:"/>
+                            <h:outputText value="#{jobsApiController.selected.url}">
+                            </h:outputText>
+
+                            <!-- The total area is the sum of all land and inland water bodies (lakes, reservoirs, rivers). -->
+                            <h:outputText value="Position Schedule:" escape="false"/>
+                            <h:outputText value="#{jobsApiController.selected.positionSchedule}">
+                            </h:outputText>
+
+                            <h:outputText value="Position Type:"/>
+                            <h:outputText value="#{jobsApiController.selected.positionType}"/>
+
+                            <h:outputText value="Start Date:"/>
+                            <h:outputText value="#{jobsApiController.selected.startDate}"/>
+
+                            <h:outputText value="End Date:"/>
+                            <h:outputText value="#{jobsApiController.selected.endDate}"/>
+
+                        </p:panelGrid>
+                    </h:panelGroup>
+                    <br/>
+                    <h:panelGroup>
+                        <!-- CLOSE button -->
+                        <p:commandButton value="Close" icon="fas fa-window-close" styleClass="ui-button-outlined"
+                                         onclick="PF('ApiViewDialog').hide()"/>
+                    </h:panelGroup>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+    <ui:include src="/apiSearch/apiSearch.xhtml"/>
+</ui:composition>
+</html>

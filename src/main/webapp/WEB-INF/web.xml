@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+    <context-param>
+        <param-name>jakarta.faces.PROJECT_STAGE</param-name>
+        <param-value>Production</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>jakarta.faces.FACELETS_SKIP_COMMENTS</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+        <param-value>.xhtml</param-value>
+    </context-param>
+    <servlet>
+        <servlet-name>Faces Servlet</servlet-name>
+        <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Faces Servlet</servlet-name>
+        <url-pattern>*.xhtml</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+    <error-page>
+        <exception-type>jakarta.faces.application.ViewExpiredException</exception-type>
+        <location>/template/sessionTimeout.xhtml</location>
+    </error-page>
+
+    <!-- Specify which file to show when the application is launched. -->
+    <welcome-file-list>
+        <welcome-file>index.xhtml</welcome-file>
+    </welcome-file-list>
+
+    <!--
+    ***************************
+    *   PrimeFaces Uploader   *
+    ***************************
+    -->
+    <context-param>
+        <param-name>primefaces.UPLOADER</param-name>
+        <param-value>auto</param-value>
+    </context-param>
+
+    <!--
+    ********************************************************************
+    *   Google's reCAPTCHA with Dr. Balci's Public and Private Keys    *
+    *      Site Key   = Public Key                                     *
+    *      Secret Key = Private Key                                    *
+    *   You are permitted to reuse Dr. Balci's public and private      *
+    *   keys below only in this course for educational purposes.       *
+    ********************************************************************
+    -->
+    <context-param>
+        <param-name>primefaces.PUBLIC_CAPTCHA_KEY</param-name>
+        <param-value>6Ld6hqwdAAAAAD7iZNEs9gPWiMtq_NA1nTgBffBs</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>primefaces.PRIVATE_CAPTCHA_KEY</param-name>
+        <param-value>6Ld6hqwdAAAAAElyze7ie0ukSc2LkF9DJ-wnxsU-</param-value>
+    </context-param>
+    <!--
+    **************************
+    *   MIME Type Mappings   *
+    **************************
+    -->
+    <mime-mapping>
+        <extension>jpeg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>jpg</extension>
+        <mime-type>image/jpeg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>png</extension>
+        <mime-type>image/png</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>svg</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>gif</extension>
+        <mime-type>image/gif</mime-type>
+    </mime-mapping>
+
+    <!-- For MP4, OGG, WEBM Video Files -->
+    <mime-mapping>
+        <extension>mp4</extension>
+        <mime-type>video/mp4</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>ogg</extension>
+        <mime-type>video/ogg</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>webm</extension>
+        <mime-type>video/webm </mime-type>
+    </mime-mapping>
+
+    <!-- For Text, HTML, PDF Files -->
+    <mime-mapping>
+        <extension>txt</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>htm</extension>
+        <mime-type>text/html</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>html</extension>
+        <mime-type>text/html</mime-type>
+    </mime-mapping>
+    <mime-mapping>
+        <extension>pdf</extension>
+        <mime-type>application/pdf</mime-type>
+    </mime-mapping>
+</web-app>

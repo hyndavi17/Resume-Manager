@@ -1,0 +1,271 @@
+
+html, body {
+    background-color: linen;
+    margin: 0 0 0 0;    /* top right bottom left */
+    width: 100%;        /* Set page width horizontally 100% */
+    height: 100%;       /* Set page height vertically 100% */
+}
+
+body, p {
+    font-family: "Times New Roman", serif;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    color: black;
+}
+
+h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    color: maroon;
+}
+
+table {
+    border-width: thin;
+    border-color: lightgray;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    color: black;
+}
+
+/*
+=======================================
+|   Site Template Component Styling   |
+=======================================
+
+In XHTML code, we refer to a CSS style defined in a CSS file by using Selectors.
+
+See CSS Selector Reference at https://www.w3schools.com/cssref/css_selectors.asp
+
+#id         defines the style of a page component whose unique identification is id.
+.stylename  defines the style of all elements marked as class="stylename".
+
+Since ids are unique, the #id styling is used only once.
+.stylename can be used many times to style a class of elements.
+
+Style the div component whose unique id is "page"
+<div id="page"> in siteTemplate
+*/
+#page {
+    font-family: "Times New Roman", serif;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: none;
+    color: black;
+}
+/*
+Style the div component whose unique id is "header"
+<div id="header"> in siteTemplate
+*/
+#header {
+    background-color: azure;
+    width: 100%;
+    height: 84px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    margin-bottom: 16px;
+}
+/*
+Style the div component whose unique id is "editableContent"
+<div id="editableContent"> in siteTemplate
+*/
+#editableContent {
+    /* height = 100% window height - (header height 84px + footer height 100px) */
+    height: calc(100% - 184px);
+    width: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 100px;
+    margin-bottom: 16px;
+}
+/*
+Style the div component whose unique id is "footer"
+<div id="footer"> in siteTemplate
+*/
+#footer {
+    height: 100px;
+    width: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/*
+==========================
+|   Styling Hyperlinks   |
+==========================
+The <a> tag defines a hyperlink.
+Hyperlinks (or links) are styled differently depending on what state they are in:
+    a:link      - normal state (unvisited link)
+    a:visited   - visited state (link clicked on by user earlier)
+    a:hover     - mouse over state (link when the user hovers over it)
+    a:active    - active state (link currently clicked on by user)
+*/
+
+/* Set the font family for the standard HTML tag "a" for hyperlinks */
+a {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 10pt;
+}
+
+.ui-tagcloud a{font-size: unset !important;}
+a:link {
+    text-decoration: none; /* Do not underline the link in normal state */
+}
+
+a:visited {
+    text-decoration: none; /* Do not underline the link in visited state */
+}
+
+a:hover {
+    text-decoration: underline; /* Underline the link in hover state */
+}
+
+a:active {
+    text-decoration: underline; /* Underline the link in active state */
+}
+
+/*
+===============================
+|   Other Style Definitions   |
+===============================
+*/
+
+/* Used in headerTemplate */
+.headerTitle {
+    font-family: "Times New Roman", serif;
+    font-size: 18pt;
+    font-style: italic;
+    font-weight: normal;
+    text-decoration: none;
+    color: mediumblue;
+}
+
+.titleSmall, .alertUser {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12pt;
+    font-style: normal;
+    font-weight: normal;
+    color: darkgreen;
+}
+
+/* Used in Profile to style user's profile photo in a circle */
+.profilePhoto {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+
+/* Used in headerTemplate to style user's profile photo in a circle */
+.smallProfilePhoto {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    vertical-align: middle;
+}
+
+/* Used in UserFiles */
+.previewImage {
+    width: auto;
+    height: 36px;
+}
+
+/*
+=========================================
+|   Image and Video Responsive Design   |
+=========================================
+*/
+
+/*
+Proportionately scale image to show on mobile devices and smaller browser windows.
+Scale the image downward, but do not enlarge it beyond the width size of 500px.
+*/
+.scalableImage {
+    width: 90%;
+    max-width: 500px;
+    height: auto;
+    border: none;
+}
+
+/* Scrolls text vertically */
+.scrollableTextBox {
+    display: block;
+    text-align: left;
+    height: 70px;
+    overflow-x: hidden;
+    overflow-y: auto;    /* Show vertical scrollbar only if there is scrollable data (Windows) */
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+/*
+Proportionately scale video to show on mobile devices and smaller browser windows.
+Scale the video downward, but do not enlarge it beyond the width size of 600px.
+*/
+.scalableVideo {
+   width: 90%;
+   max-width: 600px;
+   height: auto;
+}
+
+/*
+=========================================
+|   Skinning PrimeFaces UI Components   |
+=========================================
+*/
+
+/* Set PrimeFaces dataTable row paddings */
+.ui-datatable-data td {
+    padding-top: 3px !important;
+    padding-bottom: 3px !important;
+}
+
+/* Color PrimeFaces panel content background */
+.ui-panel-content {
+    background-color: oldlace !important;
+}
+
+/* Color PrimeFaces sidebar background */
+.ui-sidebar {
+    background-color: linen !important;
+}
+
+/* Color PrimeFaces fieldset container background */
+.ui-fieldset {
+    background-color: aliceblue !important;
+}
+
+/* Set PrimeFaces fileupload width */
+.ui-fileupload {
+    width: 80%;
+}
+
+/* Set PrimeFaces fileupload buttonbar padding */
+.ui-fileupload-buttonbar {
+    /* padding values are specified in clockwise: Top, Right, Bottom, and Left */
+    padding: 0 0 8px 0 !important;
+}
+
+/* Set PrimeFaces fileupload content minimum height */
+.ui-fileupload-content {
+    /* The drag-and-drop area height will increase as more files are dropped */
+    min-height: 200px;
+}

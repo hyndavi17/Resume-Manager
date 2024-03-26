@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="jakarta.faces.facelets"
+  xmlns:h="jakarta.faces.html"
+  xmlns:p="http://primefaces.org/ui"
+  xmlns:f="jakarta.faces.core"
+  xmlns:c="jakarta.tags.core"
+>
+  <!-- This page is constructed based on the siteTemplate -->
+  <ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="editableContent">
+      <c:if test="#{accountController.userIsAdmin()}">
+        <ui:define name="title">
+          <!-- Set the page title -->
+          <h:outputText value="User Account's" />
+        </ui:define>
+        <!-- In case of JSF validation error, set 'selected' to null in accountsController -->
+        <c:if test="#{facesContext.validationFailed}">
+          ${accountsController.unselect()}
+        </c:if>
+
+        <!-- Set 'selected' to null in accountsController when the user refreshes / reloads this JSF page -->
+        <f:metadata>
+          <f:viewAction
+            action="#{accountsController.unselect()}"
+            rendered="#{facesContext.postback}"
+          />
+        </f:metadata>
+        <div align="center">
+          <h:form id="AccountlListForm" style="width: 60%">
+            <p:panel header="List of User Accounts">
+              <p:dataTable
+                id="datalist"
+                value="#{accountsController.listOfAccounts}"
+                var="anAccount"
+                widgetVar="accountsDataTable"
+                editable="true"
+                editMode="cell"
+                selectionMode="single"
+                selection="#{accountsController.selected}"
+                reflow="true"
+                showGridlines="true"
+                paginator="true"
+                rows="10"
+                rowKey="#{anAccount.id}"
+                emptyMessage="No account found for the search query entered!"
+              >
+                <p:ajax
+                  event="cellEdit"
+                  listener="#{accountController.onCellEdit}"
+                  update="datalist,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                />
+
+                <!--
+                            *************************
+                            *   Data Table Header   *
+                            *************************
+                            -->
+                <f:facet name="header">
+                  <div align="center">
+                    <p:inputText
+                      id="globalFilter"
+                      onkeyup="PF('accountsDataTable').filter()"
+                      filterMatchMode="contains"
+                      style="width: 250px"
+                      placeholder="Enter Global Search Query"
+                    />
+                    &nbsp;
+                    <p:commandButton
+                      type="button"
+                      value="Clear All Filters"
+                      styleClass="ui-button-outlined"
+                      icon="fas fa-undo"
+                      onclick="PF('accountsDataTable').clearFilters()"
+                    />
+                  </div>
+                </f:facet>
+                <!--
+                            *********************
+                            *   Profile Photo   *
+                            *********************
+                            -->
+                <p:column
+                  headerText="Photo"
+                  style="width: 100px; text-align: center; vertical-align: top"
+                >
+                  <img
+                    src="#{anAccount.profilePicture}"
+                    alt="Profile Photo"
+                    width="80px"
+                  />
+                </p:column>
+
+                <!--
+                            *********************
+                            *      userame      *
+                            *********************
+                            -->
+                <p:column
+                  headerText="Usernam"
+                  sortBy="#{anAccount.username}"
+                  filterBy="#{anAccount.username}"
+                  filterMatchMode="contains"
+                  style="width: 160px; text-align: center; vertical-align: top"
+                >
+                  <h:outputText
+                    value="#{anAccount.username}"
+                  />
+                </p:column>
+                <!--
+                  ****************
+                  *    E-Mail    *
+                  ****************
+                  -->
+                <p:column
+                  headerText="Email"
+                  style="width: 260px; text-align: center; vertical-align: top"
+                  sortBy="#{anAccount.email}"
+                  filterBy="#{anAccount.email}"
+                  filterMatchMode="contains"
+                >
+                  <h:outputText
+                    value="#{anAccount.email}"
+                    styleClass="scrollableTextBox"
+                  />
+                </p:column>
+
+                <!--
+                **************
+                *    Role    *
+                **************
+                -->
+                <p:column
+                  headerText="Role"
+                  style="width: 80px; text-align: center; vertical-align: top"
+                  sortBy="#{anAccount.role}"
+                  filterBy="#{anAccount.role}"
+                  filterMatchMode="contains"
+                >
+                  <p:cellEditor>
+                    <f:facet name="output">
+                      <h:outputText value="#{anAccount.role}" />
+                    </f:facet>
+                    <f:facet name="input">
+                      <p:selectOneMenu
+                        value="#{anAccount.role}"
+                        style="width: 100%"
+                      >
+                        <f:selectItem itemLabel="Admin" itemValue="admin" />
+                        <f:selectItem
+                          itemLabel="Employee"
+                          itemValue="employee"
+                        />
+                        <f:selectItem itemLabel="Manager" itemValue="manager" />
+                      </p:selectOneMenu>
+                    </f:facet>
+                  </p:cellEditor>
+                </p:column>
+
+                <p:column
+                  headerText="Action"
+                  style="width: 80px; text-align: center; vertical-align: top"
+                >
+                  <p:commandButton
+                    value="Suspend"
+                    actionListener="#{accountController.suspendAccount(anAccount)}"
+                    rendered="#{!accountController.accountIsSuspended(anAccount.suspended_until)}"
+                    update=":AccountlListForm:datalist,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    style="
+                      border-color: firebrick;
+                      background-color: firebrick;
+                      color: white;
+                    "
+                  />
+
+                  <p:commandButton
+                    value="Activate"
+                    actionListener="#{accountController.activateAccount(anAccount)}"
+                    rendered="#{accountController.accountIsSuspended(anAccount.suspended_until)}"
+                    update=":AccountlListForm:datalist,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    style="
+                      border-color: firebrick;
+                      background-color: firebrick;
+                      color: white;
+                    "
+                  />
+                </p:column>
+              </p:dataTable>
+            </p:panel>
+          </h:form>
+        </div>
+      </c:if>
+    </ui:define>
+    <c:if test="#{!accountController.userIsEmployee()}">
+      <div align="center">
+        <h1>Cybercriminal Activity is Detected and Rejected!</h1>
+      </div>
+    </c:if>
+  </ui:composition>
+</html>

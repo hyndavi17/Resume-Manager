@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Two-Factor Authentication"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <!--
+        =======================================================
+        Entering the 2FA Code Sent to the User via Email or SMS
+        =======================================================
+        -->
+        <div align="center" style="width:50%; margin:0 auto;">
+            <br/><br/>
+            <h:form id="AuthenticationCodeForm">
+                <fieldset>
+                    <div style="margin-bottom:20px">
+                        <h:outputLabel for="code" value="Enter the Authentication Code Sent to You"/>
+                    </div>
+
+                    <div style="margin-bottom:10px">
+                        <p:inputText id="code" value="#{loginManager.userEnteredCodeFor2FA}"
+                                     style="width: 100px" required="true"
+                                     requiredMessage="Please enter 2FA Code!"/>
+                    </div>
+                    <br/>
+                    <div align="center">
+                        <!--
+                        ================================
+                        |         SUBMIT Button        |
+                        ================================
+                        -->
+                        <p:commandButton id="submit" value="Submit" icon="fas fa-arrow-up" styleClass="rounded-button"
+                                         action="#{loginManager.authenticateUserWithCode()}" ajax="false"
+                                         update=":growlInfoMessage, :growlErrorMessage, :growlFatalMessage, :growlWarningMessage" />
+                        &nbsp;
+                        <!--
+                        ================================
+                        |        CANCEL Button         |
+                        ================================
+                        -->
+                        <p:button outcome="/account/signIn" value="Cancel" icon="fas fa-ban" styleClass="ui-button-outlined" />
+                    </div>
+                    <br/>
+                </fieldset>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

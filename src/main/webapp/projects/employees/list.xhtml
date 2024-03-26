@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Created by Osman Balci on 2023.9.23 aad Yoseph Berhanu Alebachew on 2023.9.24
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core" >
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition>
+    <c:if test="#{!accountController.userIsManager()}">
+        <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+    </c:if>
+    <c:if test="#{accountController.userIsManager()}">
+        <c:if test="#{projectsController.projectTeam == null}">
+            Project #{projectsController.selected.name} does not have any team members yet.
+        </c:if>
+        <c:if test="#{projectsController.projectTeam != null}">
+
+            <div class="card">
+                <p:carousel value="#{projectsController.projectTeam}" var="profile" circular="true" autoplayInterval="3000"
+                            responsiveOptions="#{projectsController.responsiveOptions}" numVisible="#{projectsController.projectTeam.size()>3?3:1}" numScroll="1">
+                    <f:facet name="header">
+                        <h5>Current team members of the project: #{projectsController.selected.name}</h5>
+                    </f:facet>
+
+                    <div class="product-item">
+                        <div class="product-item-content">
+                            <div class="mb-3">
+                                <img src="#{profile.profilePicture}" class="product-image" alt="#{profile.fullName}'s profile picture" style="width: 10em"/>
+                            </div>
+                            <div>
+                                <h4 class="mb-1">#{profile.fullName}</h4>
+                                <h6 class="mt-0 mb-3">
+                                    <h:outputText value="#{profile.summary}" />
+                                </h6>
+                                <c:forEach items="#{profile.skills}" var="skill">
+                                    <span class="product-badge status-sucess">#{skill.name}</span>
+                                    <p:tag styleClass="mr-2 product-badge status-instock" value="#{skill.name}" />
+                                </c:forEach>
+                                <div class="mt-5">
+                                    <p:commandButton icon="pi pi-eye" title="View" styleClass="ui-button-secondary rounded-button"
+                                                     actionListener="#{projectsController.viewProfile(profile.id)}"
+                                                     update=":ProfileViewDlg" oncomplete="PF('ProfileViewDialog').show()" />
+                                    &nbsp;
+                                    <p:commandButton icon="pi pi-trash"  title="Remove"
+                                                     ajax="false"  styleClass="ui-button-danger rounded-button"
+                                                     actionListener="#{projectsController.removeProfile(profile)}"
+                                                     update=":ProjectForm" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p:carousel>
+            </div>
+            <!-- Clicking the View button displays the included View.xhtml file in a dialog window on top of this page. -->
+        </c:if>
+    </c:if>
+</ui:composition>
+</html>

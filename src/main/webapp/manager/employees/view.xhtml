@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  - Created by Osman Balci on 2023.9.14
+  - Modified by Hyndavi Venkatreddygari, Sai Nikhita Nayani, Yoseph Alebachew 2023.11.12
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="jakarta.faces.facelets"
+        xmlns:h="jakarta.faces.html"
+        xmlns:c="jakarta.tags.core"
+        xmlns:f="jakarta.faces.core"
+        xmlns:p="http://primefaces.org/ui"
+>
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Profule"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <div align="center">
+            <c:if test="#{accountController.userIsManager()}">
+                <h:form id="UserProfileForm" class="container" >
+                    <!--
+                    *************************
+                    *    Employee Profile   *
+                    *************************
+                    -->
+                    <h1>
+                        #{employeesController.selected.basicInfo.fullName}'s Profile
+                    </h1>
+
+                    <!--
+                    USER'S PROFILE PHOTO: Display the user's account profile photo in a circle.
+                    The cache="false" option enables immediate display of a newly uploaded photo without using cache.
+                    -->
+                    <p:fieldset id="profilePic" toggleable="false" toggleSpeed="500" style="position: relative" >
+                            <p:graphicImage cache="false" id="output" width="200"
+                                    styleClass="profilePhoto" value="#{ employeesController.selected.profilePicture}" rendered="#{ employeesController.selected.account.profilePicture!=null}"
+                            />
+                    </p:fieldset>
+
+                    <!--
+                    ********************************************
+                    *          Basic Info Section              *
+                    ********************************************
+                    -->
+                    <p:fieldset id="basicInfo" legend="Basic Info" toggleable="true" toggleSpeed="500" style="position: relative" >
+                        <div class="row">
+                            <div class="col-25">
+                                <p:outputLabel>Name:</p:outputLabel>
+                            </div>
+                            <div class="col-75">
+                                <h:outputLabel value="#{ employeesController.selected.basicInfo.fullName}" style="font-weight: normal; float: left" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25">
+                                <p:outputLabel>Date of Birth:</p:outputLabel>
+                            </div>
+                            <div class="col-50">
+                                <p:outputLabel value="#{ employeesController.selected.basicInfo.dob}" style="font-weight: normal; float: left; display: block" >
+                                    <f:convertDateTime pattern="MMM dd, yyyy"/>
+                                </p:outputLabel>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25">
+                                <p:outputLabel>Summary:</p:outputLabel>
+                            </div>
+                            <div class="col-75">
+                                <h:outputLabel value="#{ employeesController.selected.basicInfo.summary}" style="font-weight: normal; float: left" />
+                            </div>
+                        </div>
+                    </p:fieldset>
+                    <br/>
+                    <!--
+                    ********************************************
+                    *          Address information             *
+                    ********************************************
+                    -->
+                    <p:fieldset id="addressgroup" legend="Address and Contact" toggleable="true" toggleSpeed="500" rendered="#{accountController.userIsEmployee()}" style="position: relative" >
+                       <div class="row">
+                           <div class="col-25">
+                               <p:outputLabel>Phone No.:</p:outputLabel>
+                           </div>
+                           <div class="col-75">
+                               <h:outputLabel value="#{employeesController.selected.address.phoneNumber}" style="font-weight: normal; float: left" />
+                                <br/>
+                           </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25"> <p:outputLabel>Email:</p:outputLabel> </div>
+                            <div class="col-75">
+                                <h:outputLabel value="#{employeesController.selected.address.email}" style="font-weight: normal; float: left" /> <br/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-25"> <p:outputLabel>Address:</p:outputLabel> </div>
+                            <div class="col-75">
+                                <h:outputLabel value="#{employeesController.selected.address.address1}" style="font-weight: normal; float: left; clear: both" /><br/>
+                                    <c:if test="#{employeesController.selected.address.address2}" >
+                                        <h:outputLabel value="#{employeesController.selected.address.address2}"
+                                                style=" font-weight: normal; float: left; clear: both; padding-top: 0em;" /><br/>
+                                    </c:if>
+                                    <h:outputLabel value="#{ employeesController.selected.address.city ne '' and  employeesController.selected.address.city ne null ?  employeesController.selected.address.city.concat(', ') : ''}
+                                                    #{ employeesController.selected.address.stateName ne '' and  employeesController.selected.address.stateName ne null ?  employeesController.selected.address.stateName.concat(', ') : ''}
+                                                    #{ employeesController.selected.address.zipcode ne '' and  employeesController.selected.address.zipcode ne null ?  employeesController.selected.address.zipcode : ''}"
+                                                   style=" font-weight: normal; float: left; clear: both; padding-top: 0em; " />
+                                    <br/>
+                                    <h:outputLabel value="#{employeesController.selected.address.country}" style=" font-weight: normal; float: left; clear: both; padding-top: 0em; " />
+                            </div>
+                        </div>
+                    </p:fieldset>
+                    <br/>
+                    <!--
+                    ********************************************
+                    *          Educational Background          *
+                    ********************************************
+                    -->
+                    <p:fieldset id="educationgroup" legend="Educational Backgound" toggleable="true" toggleSpeed="500" style="position: relative">
+                        <c:forEach items="${ employeesController.selected.educations}" var="education">
+                            <div class="row">
+                                <!-- Date Column -->
+                                <div class="col-25">
+                                    <p:outputLabel value="#{education.graduationDate}" style=" font-size: 3em; color: gray; margin-right: 0.3em; margin-top: -0.1em; ">
+                                        <f:convertDateTime pattern="yyyy"/>
+                                    </p:outputLabel>
+                                </div>
+                                <!-- Text Column -->
+                                <div class="col-50">
+                                    <p:outputLabel value="#{education.instituteName}" style="float: left; clear: both"/><br/>
+                                    <p:outputLabel value="#{education.degree}" style=" float: left; font-weight: normal; padding-top: 0em; clear: both; color: gray; "/>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </p:fieldset>
+                    <!--
+                    ***********************
+                    *      Experience      *
+                    ***********************
+                    -->
+                    <p:fieldset id="experiencegroup" legend="Experiences" toggleable="true" toggleSpeed="500"
+                                style="position: relative">
+
+                        <c:forEach items="${employeesController.selected.experiences}" var="experience">
+                            <div class="row">
+                                <!-- Date Column -->
+                                <div class="col-25">
+                                    <p:outputLabel
+                                            value="#{experience.endDate}"
+                                            style=" font-size: 3em; color: gray; margin-right: 0.3em; margin-top: -0.1em; " >
+                                        <f:convertDateTime pattern="yyyy"/>
+                                    </p:outputLabel>
+                                </div>
+                                <!-- Text Column -->
+                                <div class="col-50">
+                                    <p:outputLabel value="#{experience.organization}" style="float: left; clear: both" /><br/>
+                                    <p:outputLabel value="#{experience.responsibilities}"
+                                                   style="float: left; font-weight: normal; padding-top: 0em; clear: both; color: gray; " />
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </p:fieldset>
+
+                    <!--
+                    ***********************
+                    *       Skills        *
+                    ***********************
+                    -->
+                    <p:fieldset id="skillsgroup" legend="Skills" toggleable="true" toggleSpeed="500"
+                                style="position: relative">
+                            <div class="row">
+                                <c:forEach items="#{employeesController.selected.skills}" var="skill">
+                                    <p:tag styleClass="mr-2" value="#{skill.name}" rounded="true" style="padding: 0.7em"/>&nbsp;
+                                </c:forEach>
+                            </div>
+                    </p:fieldset>
+
+                    <!--
+                    ***********************
+                    *     Certificate     *
+                    ***********************
+                    -->
+                    <p:fieldset id="certificategroup" legend="Certificates" toggleable="true" toggleSpeed="500" style="position: relative" >
+                        <c:forEach items="${employeesController.selected.certificates}" var="certificate">
+                            <div class="row">
+                                <!-- Date Column -->
+                                <div class="col-25">
+                                    <p:outputLabel
+                                            value="#{certificate.dateObtained}"
+                                            style="font-size: 3em; color: gray; margin-right: 0.3em; margin-top: -0.1em; " >
+                                        <f:convertDateTime pattern="yyyy"/>
+                                    </p:outputLabel>
+                                </div>
+                                <!-- Text Column -->
+                                <div class="col-50">
+                                    <p:outputLabel value="#{certificate.name}" style="float: left; clear: both" /><br/>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </p:fieldset>
+                    <!--
+                        ***********************
+                        *     Attachments     *
+                        ***********************
+                        -->
+                    <p:fieldset id="attachmentsgroup" legend="Attachments" toggleable="true" toggleSpeed="500" style="position: relative" >
+                        <div class="row">
+                            <c:forEach items="${employeesController.selected.attachments}" var="attachment" >
+                                <a href="#{employeesController.attachemtURLPrefix}#{attachment.name}" target="_blank"> #{attachment.name} </a> &nbsp; &nbsp;
+                            </c:forEach>
+                        </div>
+                    </p:fieldset>
+                </h:form>
+            </c:if>
+            <c:if test="#{!accountController.userIsSignedIn()}">
+                <div><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+            </c:if>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Sign In"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <div align="center">
+            <h1>Sign In</h1>
+            <h:form id="loginForm"  class="container" >
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel for="username">Username</p:outputLabel>
+                    </div>
+                    <div class="col-50">
+                        <p:inputText id="username" value="#{accountController.username}"
+                                     required="true" requiredMessage="Username is required.">
+                        </p:inputText>
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel for="password">Password</p:outputLabel>
+                    </div>
+                    <div class="col-50">
+                        <p:password id="password" value="#{accountController.password}"
+                                    required="true" requiredMessage="Password is required.">
+                        </p:password>
+                    </div>
+                    <br /><br /><div class="row">
+                        <!--
+                        ==========================
+                        |        reCAPTCHA       |
+                        ==========================
+                        See the reCAPTCHA code snippet on the course website to learn about it.
+                        *** Do NOT forget to enter the 2 context parameters in web.xml ***
+                        -->
+                        <c:if test="#{accountController.loginAttempt > configurationService.recaptchaCount}">
+                            <p:captcha id="reCAPTCHA" label="reCAPTCHA" required="true"
+                                       requiredMessage="Please check the box to verify that you are not a robot!" />
+                            <br/><br/>
+                        </c:if>
+                    </div>
+                    <br /><br /><br />
+                    <div class="row">
+                        <p:menubar>
+                            <p:menuitem value="Sign In" action="#{accountController.login()}" ajax="false" icon="fas fa-sign-in-alt" update="loginForm"/>
+                            <p:menuitem value="Create Account" outcome="/account/create" icon="fas fa-user-plus"/>
+                            <p:menuitem value="Forgot Password" outcome="/userPasswordChange/EnterUsername" icon="fas fa-key"/>
+                            <p:menuitem value="Recover Your Account" outcome="/account/recoverAccount" icon="fas fa-retweet"/>
+                            <p:menuitem value="Cancel" outcome="/index" icon="fas fa-ban"/>
+                        </p:menubar>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+        <br/>
+    </ui:define>
+</ui:composition>
+</html>

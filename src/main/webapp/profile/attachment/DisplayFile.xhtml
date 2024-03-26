@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  - Created by Osman Balci on 2023.9.14
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Display File"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{accountController.userIsSignedIn() == true}">
+            <div align="center">
+                <h1>#{attachmentController.cleanedAttachmentForSelected()}</h1>
+                <!--
+                *******************************
+                *   SWITCH Statement in JSF   *
+                *******************************
+                JSF Standard Tag Library (JSTL) Core tags <c:choose>, <c:when> and <c:otherwise>
+                provide the SWITCH statement functionality under the following structure:
+                
+                    <c:choose>
+                        <c:when test="${condition1}">
+                            // Statements to execute when condition1 is true
+                        </c:when>
+                        <c:when test="${condition2}">
+                            // Statements to execute when condition2 is true
+                        </c:when>
+                        <c:otherwise>
+                            // Statements to execute when all <c:when> tests are false.
+                        </c:otherwise>
+                    </c:choose>
+                -->
+
+                <c:choose>
+                    <c:when test="#{attachmentController.isImage()}">
+                        <!-- isImage() returns true if the file is an image file of type JPG, JPEG, PNG, or GIF -->
+                        <h:graphicImage class="scalableImage"
+                                        value="#{attachmentController.selectedAttachmentURI()}"/>
+                        <br/>
+                    </c:when>
+
+                    <c:when test="#{attachmentController.isViewable()}">
+                        <!-- isViewable() returns true if the file is of type HTML, PDF or TXT -->
+                        <div>
+                            <iframe src="#{attachmentController.selectedAttachmentURI()}"
+                                    width="90%" height="600px" scrolling="yes">
+                            </iframe>
+                        </div>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br/><br/>
+                        <!-- Alert User -->
+                        <h:outputText class="alertUser"
+                                      value="Only image files JPG, JPEG, PNG, GIF and document files HTML, PDF, TXT can be displayed!"/>
+                        <br/>
+                    </c:otherwise>
+                </c:choose>
+                <br/><br/>
+                <!--
+                ================================
+                |         BACK Button          |
+                ================================
+                -->
+                <p:button outcome="/profile/attachment/ListAttachments?faces-redirect=true" value="Back"
+                          icon="fas fa-arrow-left" styleClass="ui-button-outlined"/>
+            </div>
+        </c:if>
+        <c:if test="#{accountController.userIsSignedIn() == false}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+</html>

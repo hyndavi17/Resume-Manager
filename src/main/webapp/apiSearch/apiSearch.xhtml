@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+
+    <ui:composition>
+        <!-- 
+        =======================================================================
+        |  Selecting the API SEARCH menu option displays this Dialog window   |
+        |  for the user to search for a Job.                              |
+        =======================================================================
+        -->
+        <p:dialog id="JobSearchDlg" header="Search API" widgetVar="JobSearchDialog"
+                  modal="true" position="center" appendTo="@(body)"
+                  showEffect="slide" hideEffect="fade" responsive="true" >
+
+            <h:form id="JobSearchForm">
+                <p:panel>                
+                    <h:panelGrid columns="4">
+                        <p:outputLabel value="Search: " />
+                        <p:inputText id="searchString" value="#{jobsApiController.searchString}"
+                                     required="true" requiredMessage="Please Enter a Search String!"
+                                     placeholder="Enter search string" >
+                            <f:validateLength minimum="2" />
+                        </p:inputText>
+
+                        <span id="space">&nbsp;</span>
+
+                        <!-- Search category is selected here. -->
+                        <p:selectOneMenu id="searchField" value="#{jobsApiController.searchField}"
+                                         required="true" requiredMessage="Please Select a Search Category!" >
+
+                            <f:selectItem itemLabel="Select Category"       itemValue="" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Keyword"   itemValue="Keyword"/>
+                            <f:selectItem itemLabel="PositionTitle"     itemValue="PositionTitle"/>
+                            <f:selectItem itemLabel="LocationName"          itemValue="LocationName"/>
+                        </p:selectOneMenu>
+                    </h:panelGrid>
+
+                    <h:panelGroup>
+                        <br /><br />
+                        <div align="center">
+                            <!-- SUBMIT button -->
+                            <p:commandButton value="Submit" icon="fas fa-arrow-up" styleClass="rounded-button"
+                                             ajax="false" action="#{jobsApiController.performSearch()}" />
+                            &nbsp;
+                            <!-- CANCEL button -->
+                            <p:commandButton value="Cancel" icon="fas fa-ban" styleClass="ui-button-outlined"
+                                             onclick="PF('JobSearchDialog').hide()" immediate="true" />
+                        </div>
+                    </h:panelGroup>
+                </p:panel>
+            </h:form>
+        </p:dialog>
+    </ui:composition>
+</html>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  - Created by Osman Balci on 2023.9.14
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Play Video"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{accountController.userIsSignedIn() == true}">
+            <div align="center">
+                <h1>#{attachmentController.cleanedAttachmentForSelected()}</h1>
+                <!--
+                *******************************
+                *   SWITCH Statement in JSF   *
+                *******************************
+                JSF Standard Tag Library (JSTL) Core tags <c:choose>, <c:when> and <c:otherwise>
+                provide the SWITCH statement under the following structure:
+                
+                    <c:choose>
+                        <c:when test="${condition1}">
+                            // Statements to execute when condition1 is true
+                        </c:when>
+                        <c:when test="${condition2}">
+                            // Statements to execute when condition2 is true
+                        </c:when>
+                        <c:otherwise>
+                            // Statements to execute when all <c:when> tests are false.
+                        </c:otherwise>
+                    </c:choose>
+                -->
+
+                <c:choose>
+                    <!-- 
+                    Acceptable Video Formats [isVideo() returns true for]: MP4, OGG, and WEBM.
+                    Chrome and Firefox can play: MP4, OGG, WEBM, and those MOV files with MP4 encoding.
+                    Safari can play MP4 and any kind of MOV. But OGG and WEBM cannot be played under Safari.
+                    
+                    Apple's MOV video type is treated as MP4 media to be handled by the built-in HTML5 video player.
+                    But MOV files can contain a variety of different encodings and therefore, they are not all MP4 compatible.
+                    -->
+                    <c:when test="#{attachmentController.isVideo()}">
+                        <!--
+                        ***************************
+                        *     PLAY VIDEO FILE     *
+                        ***************************
+                        Ignore IntelliJ error message!
+                        -->
+                        <video class="scalableVideo" preload="auto" controls="controls"
+                               src="#{attachmentController.selectedAttachmentURI()}">
+                            Your browser does not support the HTML5 Video element.
+                        </video>
+                    </c:when>
+
+                    <c:otherwise>
+                        <br/><br/>
+                        <!-- Alert User -->
+                        <h:outputText class="alertUser"
+                                      value="Only video files of type MP4, OGG or WEBM can be played!"/>
+                        <br/>
+                    </c:otherwise>
+                </c:choose>
+
+                <br/><br/>
+                <!--
+                ================================
+                |         BACK Button          |
+                ================================
+                -->
+                <p:button outcome="/profile/attachment/ListAttachments?faces-redirect=true" value="Back"
+                          icon="fas fa-arrow-left" styleClass="ui-button-outlined"/>
+            </div>
+        </c:if>
+        <c:if test="#{accountController.userIsSignedIn() == false}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+</html>

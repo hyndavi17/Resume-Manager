@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core" >
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value=""/>
+    </ui:define>
+    <ui:define name="editableContent" >
+        <c:if test="#{accountController.userIsManager()}">
+            <!-- In case of JSF validation error, set 'selected' to null in projectsController -->
+            <c:if test="#{facesContext.validationFailed}">
+                ${projectsController.unselect()}
+            </c:if>
+
+            <div align="center" style="padding-left: 3em; padding-right: 3em">
+                <h:form id="ProjectForm">
+                    <c:if test="#{projectsController.selected != null}">
+                        <div class="row">
+                            <div class="col-25">
+                                <!--
+                                **********************
+                                *   Project Detail   *
+                                **********************
+                                -->
+                                <p:fieldset id="projectInfo" toggleable="false" toggleSpeed="500" style="position: relative;">
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <p:outputLabel>Name</p:outputLabel>
+                                        </div>
+                                        <div class="col-75">
+                                            <h:outputLabel value="#{projectsController.selected.name}" style="font-weight: normal; float: left" />
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <p:outputLabel>Client</p:outputLabel>
+                                        </div>
+                                        <div class="col-75">
+                                            <h:outputLabel value="#{projectsController.selected.client}" style="font-weight: normal; float: left" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <p:outputLabel >Proposal Date</p:outputLabel>
+                                        </div>
+                                        <div class="col-50">
+                                            <p:outputLabel value="#{projectsController.selected.proposalDate}" style="font-weight: normal; float: left; display: block" >
+                                                <f:convertDateTime pattern="MMM dd, yyyy"/>
+                                            </p:outputLabel>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <p:outputLabel>Description</p:outputLabel>
+                                        </div>
+                                        <div class="col-75">
+                                            <h:outputLabel value="#{projectsController.selected.description}" style="font-weight: normal; float: left; text-align: left" />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-25">
+                                            <p:outputLabel>Status</p:outputLabel>
+                                        </div>
+                                        <div class="col-75">
+                                            <p:tag styleClass="mr-2" severity="#{projectsController.projectStatusColors[projectsController.selected.status]}" value="#{projectsController.projectStatus[projectsController.selected.status]}" />
+                                        </div>
+                                    </div>
+                                </p:fieldset>
+                            </div>
+                            <div class="col-75">
+                                <ui:include src="/projects/employees/list.xhtml"/>
+                            </div>
+                        </div>
+                        <div class="row">
+
+
+
+                                <!-- CREATE button: id is used since it is referenced to be activated or deactivated -->
+                                <p:commandButton id="addButton" value="Add" icon="fas fa-plus" action="#{projectsController.addEmployee()}" styleClass="ui-button-success" />
+                                &nbsp;
+                                <!--
+                                ================================
+                                |        Export Button         |
+                                ================================
+                                -->
+                                <p:commandButton icon="fa fa-download" value="Export Resumes"
+                                                 actionListener="#{projectsController.prepareExport()}"
+                                                 update=":ExportResumeForm" oncomplete="PF('ExportResumeDialog').show()" />
+                                &nbsp;
+                                <!--
+                                ================================
+                                |          Back Button         |
+                                ================================
+                                -->
+                                <p:button outcome="/projects/list" value="Go Back" icon="fas fa-arrow-left" styleClass="ui-button-outlined" />
+                        </div>
+                    <br />
+                    </c:if>
+                    <c:if test="#{projectsController.selected == null }">
+                        <div align="center"><h1>Project Not found</h1></div>
+                    </c:if>
+
+                </h:form>
+            </div>
+            <ui:include src="/projects/export.xhtml"/>
+            <ui:include src="/projects/employees/view.xhtml"/>
+        </c:if>
+        <c:if test="#{!accountController.userIsManager()}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+
+    </ui:define>
+</ui:composition>
+</html>

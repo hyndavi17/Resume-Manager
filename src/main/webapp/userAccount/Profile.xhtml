@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="My Account"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{accountController.userIsSignedIn() == true}">
+            <h:form id="UserProfileForm">
+                <!--
+                **********************
+                *       Sidebar      *
+                **********************
+                -->
+                <p:sidebar widgetVar="sidebar" position="left">
+                    <br/><br/><br/><br/>
+                    <div align="center">
+                        <h1>Account Settings</h1>
+                    </div>
+                    <br/>
+                    <div style="padding-left: 15%">
+                        <p:menu>
+                            <p:menuitem value="Edit Profile" action="#{accountController.prepareForEdit()}"
+                                        ajax="false" icon="fas fa-edit"/>
+                            <p:menuitem value="Change Photo" outcome="/userPhoto/ChangePhoto" icon="fas fa-camera"/>
+                            <p:menuitem value="Change Password" outcome="/userPasswordChange/EnterUsername"
+                                        icon="fas fa-key"/>
+                            <p:menuitem value="Delete Account" outcome="/userAccount/DeleteAccount"
+                                        icon="fas fa-trash-alt"/>
+                        </p:menu>
+                    </div>
+                    <br/>
+                    <div align="center">
+                        <!-- Two-Factor Authentication Status -->
+                        <c:if test="#{accountController.signedInUser.twoFactorAuthenticationStatus == 1}">
+                            <span class="titleSmall">Two-Factor Authentication<br/>is ON via Email</span>
+                        </c:if>
+                        <c:if test="#{accountController.signedInUser.twoFactorAuthenticationStatus == 2}">
+                            <span class="titleSmall">Two-Factor Authentication<br/>is ON via SMS</span>
+                        </c:if>
+                        <c:if test="#{accountController.signedInUser.twoFactorAuthenticationStatus == 0}">
+                            <span class="titleSmall">Two-Factor Authentication<br/>is Turned OFF</span>
+                        </c:if>
+                    </div>
+                </p:sidebar>
+
+                <!--
+                **********************
+                *   User's Profile   *
+                **********************
+                -->
+                <div align="center">
+
+                    <!--
+                    USER'S PROFILE PHOTO: Display the user's account profile photo in a circle.
+                    The cache="false" option enables immediate display of a newly uploaded photo without using cache.
+                    -->
+                    <p:graphicImage cache="false" styleClass="profilePhoto" value="#{accountController.signedInUser.profilePicture}" rendered="#{accountController.signedInUser.profilePicture!=null}"/>
+                    <br/><br/>
+                    <table border="1" align="center" cellpadding="5" cellspacing="0">
+                        <tbody>
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <h:outputText value="Email:"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <h:outputText value="#{accountController.signedInUser.email}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <h:outputText value="Username:"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <h:outputText value="#{accountController.signedInUser.username}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <h:outputText value="Account:"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <p:commandButton value="Settings" type="button" onclick="PF('sidebar').show()"
+                                                 icon="fas fa-cog" styleClass="ui-button-outlined"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </h:form>
+        </c:if>
+        <c:if test="#{accountController.userIsSignedIn() == false}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+</html>

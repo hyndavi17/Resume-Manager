@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"   
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets">
+    <!--
+    **********************************************************************
+    This template file defines the page layout design for the entire site.
+    Any page created based on this template will have this layout design.
+    **********************************************************************
+    -->
+    <h:head>
+        <!-- 
+        The <title> element (a) defines a title in the browser's toolbar,
+        (b) provides a title for the page when it is added to favorites, and
+        (c) displays a title for the page in search-engine results.
+        -->
+        <title>
+            <ui:insert name="title">ResPicker</ui:insert>
+        </title>
+
+        <!-- 
+        =============================
+        *   Mobile Device Support   *
+        =============================
+        Instruct the web browser on how to control the page's dimensions
+        and scaling on mobile devices. 
+        -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+        <!-- 
+        ================================
+        *   Handling Session Timeout   *
+        ================================
+        Show the sessionTimeout.xhtml page when user's session expires. 
+        -->
+        <meta http-equiv="refresh" content="#{facesContext.externalContext.sessionMaxInactiveInterval};
+              url=#{request.contextPath}/template/sessionTimeout.xhtml"/>
+
+        <!-- 
+        =============================
+        *   CSS for the Entire UI   *
+        =============================
+        The siteStyles CSS file is linked for styling and formatting the entire UI. 
+        -->
+        <h:outputStylesheet library="css" name="siteStyles.css" />
+        <h:outputStylesheet library="css" name="forms.css" />
+
+        <!--
+        ========================================
+        *   Font Awesome "SVG with JS" Icons   *
+        ========================================
+        The following enables the use of more than 2,000 "Scalable Vector Graphics (SVG) with
+        JavaScript (JS)" free icons listed at https://fontawesome.com/search?o=r&m=free
+
+        The following downloaded files are version 6.4.0 (March 2023) and are placed in the resources/js folder:
+           * all.js            Contains all of the free fonts
+           * fontawesome.js    is the Fontawesome starter file
+        -->
+        <h:outputScript library="js" name="all.js" />
+        <h:outputScript library="js" name="fontawesome.js" />
+
+        <!-- 
+        =====================
+        *   Favorite Icon   *
+        =====================
+        A favicon (short for favorite icon), also known as a shortcut icon, website icon, tab icon, 
+        URL icon or bookmark icon, is a file named favicon.ico See https://en.wikipedia.org/wiki/Favicon
+        The icon is displayed to the left of the page title on a tab in the Chrome web browser.
+        The link below enables all your UI pages to display the favorite icon.
+        
+        Use EL to get the image file since it will be referenced by all UI pages.
+        -->
+        <link rel="shortcut icon" href="#{resource['images:logo.png']}" type="image/x-icon" />
+
+    </h:head>
+
+    <h:body>  
+        <div id="page">  
+            <!-- 
+            The Site Template file layout design consists of three components:
+                1. Header Component (Typically is the same for the entire UI)
+                2. Editable Content Component (each page creates its own content)
+                3. Footer Component (Typically is the same for the entire UI)
+
+            =====================================
+            * Header Component of this Template *
+            =====================================
+            The header component is displayed on the top of each page created based on this siteTemplate.
+            Changes made in the header component will show up automatically with all pages created 
+            based on this siteTemplate for the entire site, achieving great maintainability.
+            -->
+            <div id="header">
+                <ui:insert name="header" >
+                    <ui:include src="headerTemplate.xhtml" />
+                </ui:insert>
+            </div>
+
+
+            <div id="editableContent">
+                <ui:insert name="growlMessages" >
+                    <ui:include src="growlMessages.xhtml" />
+                </ui:insert>
+                <ui:insert name="editableContent" >
+                    <ui:include src="contentTemplate.xhtml" />
+                </ui:insert>
+            </div>
+
+            <!--
+            =====================================
+            * Footer Component of this Template *
+            =====================================
+            The footer component is displayed on the bottom of each page created based on this siteTemplate.
+            Changes made in the footer component will show up automatically with all pages created 
+            based on this siteTemplate for the entire site, achieving great maintainability.
+            -->
+            <div id="footer">
+                <ui:insert name="footer" >
+                    <ui:include src="footerTemplate.xhtml" />
+                </ui:insert>
+            </div>
+
+        </div>
+    </h:body>
+</html>

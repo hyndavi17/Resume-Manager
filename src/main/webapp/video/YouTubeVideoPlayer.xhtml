@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition>
+    <!--
+    =======================================================
+    Dialog Showing YouTube Player to Play the Video with ID
+    =======================================================
+    -->
+    <p:dialog id="VideoPlayerDlg" header="Play Video" widgetVar="VideoPlayerDialog"
+              modal="true" position="center" appendTo="@(body)" width="70%"
+              showEffect="slide" hideEffect="fade" responsive="true">
+
+        <h:form id="VideoPlayerForm">
+
+            <div align="center">
+                <br />
+                <div class="responsive-container">
+                    <iframe class="responsive-iframe"
+                            src="https://www.youtube.com/embed/#{videoController.youTubeVideoId}">
+                    </iframe>
+                </div>
+                <br />
+                <!-- CLOSE button -->
+                <p:commandButton value="Close" icon="fas fa-window-close" styleClass="ui-button-outlined"
+                                 onclick="PF('VideoPlayerDialog').hide()" />
+            </div>
+        </h:form>
+    </p:dialog>
+
+</ui:composition>
+</html>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  - Created by Osman Balci on 2023.9.23 aad Yoseph Berhanu Alebachew on 2023.9.24
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core">
+
+<ui:composition>
+    <!--
+    =================================================================
+    |  Clicking the View button in List.xhtml displays this Dialog  |
+    |  window for the user to view the selected profile's data.     |
+    =================================================================
+    -->
+
+    <p:dialog id="ProfileViewDlg" header="#{projectsController.currentProfile.fullName}'s Profile " widgetVar="ProfileViewDialog"
+              modal="true" position="center" appendTo="@(body)" width="80%" height="800"
+              showEffect="slide" hideEffect="fade" responsive="true">
+        <!--
+        Various effect options can be used when showing and closing the dialog.
+        Use showEffect and hideEffect options to apply these effects:
+            blind, bounce, clip, drop, explode, fade, fold, highlight, puff,
+            pulsate, scale, shake, size, slide and transfer. [PrimeFaces Documentation]
+        -->
+
+        <h:form id="ProfileViewForm" >
+            <!--
+             ********************
+             *   View Profile   *
+             ********************
+            -->
+            <!--
+            USER'S PROFILE PHOTO: Display the user's account profile photo in a circle.
+            The cache="false" option enables immediate display of a newly uploaded photo without using cache.
+            -->
+            <br/>
+            <div class="profile-pic row">
+                <p:graphicImage cache="false" id="output" width="200" styleClass="profilePhoto" value="#{projectsController.currentProfile.profilePicture}" rendered="#{projectsController.currentProfile.account.profilePicture!=null}"/>
+            </div>
+
+            <!--
+            ********************************************
+            *          Basic Info Section              *
+            ********************************************
+            -->
+            <p:fieldset id="basicInfo" legend="Basic Info" toggleable="false" toggleSpeed="500" style="position: relative;">
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel>Name</p:outputLabel>
+                    </div>
+                    <div class="col-75">
+                        <h:outputLabel value="#{projectsController.currentProfile.basicInfo.fullName}" style="font-weight: normal; float: left" />
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel >Date of Birth</p:outputLabel>
+                    </div>
+                    <div class="col-50">
+                        <p:outputLabel value="#{projectsController.currentProfile.basicInfo.dob}" style="font-weight: normal; float: left; display: block" >
+                            <f:convertDateTime pattern="MMM dd, yyyy"/>
+                        </p:outputLabel>
+                    </div>
+                </div>
+            </p:fieldset>
+            <br/>
+            <!--
+            ********************************************
+            *          Address information             *
+            ********************************************
+            -->
+            <p:fieldset id="addressgroup" legend="Address and Contact" toggleable="false" toggleSpeed="500" rendered="#{accountController.userIsEmployee()}" style="position: relative;">
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel>Phone No.</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <h:outputLabel value="#{ projectsController.currentProfile.address.phoneNumber}" style="font-weight: normal; float: left" /> <br/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel>Email</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <h:outputLabel value="#{projectsController.currentProfile.address.email}" style="font-weight: normal; float: left" /> <br/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel>Address</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <h:outputLabel value="#{ projectsController.currentProfile.address.address1}" style="font-weight: normal; float: left;clear: both" /><br/>
+                            <c:if test="#{projectsController.currentProfile.address.address2}">
+                                <h:outputLabel value="#{ projectsController.currentProfile.address.address2}" style="font-weight: normal; float: left;clear: both;padding-top: 0em" /><br/>
+                            </c:if>
+                            <h:outputLabel value="#{ projectsController.currentProfile.address.city},#{ projectsController.currentAddress.stateName}, #{ projectsController.currentAddress.zipcode}" style="font-weight: normal; float: left;clear: both;padding-top: 0em" /> <br/>
+                            <h:outputLabel value="#{ projectsController.currentProfile.address.country}" style="font-weight: normal; float: left;clear: both;padding-top: 0em" />
+                        </div>
+                    </div>
+            </p:fieldset>
+            <br/>
+
+            <!--
+            ********************************************
+            *          Educational Background          *
+            ********************************************
+            -->
+            <p:fieldset id="educationgroup" legend="Educational Backgound" toggleable="false" toggleSpeed="500" style="position: relative">
+                <c:forEach items="${projectsController.currentProfile.educations}" var="education" >
+                    <div class="row" >
+                        <div class="col-25">
+                            <p:outputLabel value="#{education.graduationDate}" style="font-size: 3em; color: gray; margin-right: 0.3em;margin-top: -0.1em" >
+                                <f:convertDateTime pattern="yyyy"/>
+                            </p:outputLabel>
+                        </div>
+                        <div class="col-75" style="position: relative">
+                            <p:outputLabel style="float:left;clear: both">#{education.instituteName}</p:outputLabel> <br />
+                            <p:outputLabel style="float:left; font-weight: normal; padding-top: 0em; clear: both; color: gray">#{education.degree} </p:outputLabel> <br />
+                        </div>
+                    </div>
+                </c:forEach>
+            </p:fieldset>
+
+            <!--
+                    ***********************
+                    *      Experience      *
+                    ***********************
+                    -->
+            <p:fieldset id="experiencegroup" legend="Experiences" toggleable="fasle" toggleSpeed="500"
+                        style="position: relative">
+
+                <c:forEach items="${projectsController.currentProfile.experiences}" var="experience">
+                    <div class="row">
+                        <!-- Date Column -->
+                        <div class="col-25">
+                            <p:outputLabel
+                                    value="#{experience.endDate}"
+                                    style=" font-size: 3em; color: gray; margin-right: 0.3em; margin-top: -0.1em; " >
+                                <f:convertDateTime pattern="yyyy"/>
+                            </p:outputLabel>
+                        </div>
+                        <!-- Text Column -->
+                        <div class="col-50">
+                            <p:outputLabel value="#{experience.organization}" style="float: left; clear: both" /><br/>
+                            <p:outputLabel value="#{experience.responsibilities}"
+                                           style="float: left; font-weight: normal; padding-top: 0em; clear: both; color: gray; " />
+                        </div>
+                    </div>
+                </c:forEach>
+            </p:fieldset>
+
+            <!--
+            ***********************
+            *       Skills        *
+            ***********************
+            -->
+            <p:fieldset id="skillsgroup" legend="Skills" toggleable="false" toggleSpeed="500"
+                        style="position: relative">
+                <div class="row">
+                    <c:forEach items="#{projectsController.currentProfile.skills}" var="skill">
+                        <p:tag styleClass="mr-2" value="#{skill.name}" rounded="true" style="padding: 0.7em"/>&nbsp;
+                    </c:forEach>
+                </div>
+            </p:fieldset>
+
+            <!--
+            ***********************
+            *     Certificate     *
+            ***********************
+            -->
+            <p:fieldset id="certificategroup" legend="Certificates" toggleable="false" toggleSpeed="500" style="position: relative" >
+                <c:forEach items="${projectsController.currentProfile.certificates}" var="certificate">
+                    <div class="row">
+                        <!-- Date Column -->
+                        <div class="col-25">
+                            <p:outputLabel
+                                    value="#{certificate.dateObtained}"
+                                    style="font-size: 3em; color: gray; margin-right: 0.3em; margin-top: -0.1em; " >
+                                <f:convertDateTime pattern="yyyy"/>
+                            </p:outputLabel>
+                        </div>
+                        <!-- Text Column -->
+                        <div class="col-50">
+                            <p:outputLabel value="#{certificate.name}" style="float: left; clear: both" /><br/>
+                        </div>
+                    </div>
+                </c:forEach>
+            </p:fieldset>
+            <!--
+                ***********************
+                *     Attachments     *
+                ***********************
+                -->
+            <p:fieldset id="attachmentsgroup" legend="Attachments" toggleable="false" toggleSpeed="500" style="position: relative" >
+                <div class="row">
+                    <c:forEach items="${projectsController.currentProfile.attachments}" var="attachment" >
+                        <a href="#{employeesController.attachemtURLPrefix}#{attachment.name}" target="_blank"> #{attachment.name} </a> &nbsp; &nbsp;
+                    </c:forEach>
+                </div>
+            </p:fieldset>
+            <br />
+            <!--
+            ================================
+            |        Add Button           |
+            ================================
+            -->
+            <p:commandButton icon="pi pi-plus"
+                             ajax="false"
+                             actionListener="#{projectsController.addProfile(projectsController.currentProfile)}"
+                             rendered="#{!projectsController.has(projectsController.currentProfile.id)}"
+                             update=":EmployeeListForm"  styleClass="ui-button-success" />
+            &nbsp;
+            <p:commandButton icon="pi pi-trash"
+                             ajax="false"
+                             actionListener="#{projectsController.removeProfile(projectsController.currentProfile)}"
+                             rendered="#{projectsController.has(projectsController.currentProfile.id)}"
+                             update=":EmployeeListForm"  styleClass="ui-button-danger" />
+            &nbsp;
+            <!--
+            ================================
+            |        Close Button         |
+            ================================
+            -->
+            <p:commandButton value="Close" icon="fas fa-ban" styleClass="ui-button-outlined"
+                             onclick="PF('ProfileViewDialog').hide()"/>
+        </h:form>
+    </p:dialog>
+</ui:composition>
+</html>

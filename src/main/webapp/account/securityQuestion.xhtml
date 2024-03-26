@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:c="jakarta.tags.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <!-- This page is constructed based on the siteTemplate -->
+    <ui:composition template="/template/siteTemplate.xhtml">
+
+        <ui:define name="title">
+            <!-- Set the page title -->
+            <h:outputText value="Security Question" />
+        </ui:define>
+
+        <!-- Create the content for this page below -->
+        <ui:define name="editableContent">
+
+            <div align="center" >
+                <h:form id="recoveryForm"  class="container" >
+                    <br /><br />
+                    <c:if test="#{accountController.username == null}">
+                        <div class="row">
+                            <div class="col-25">
+                                <p:outputLabel for="username">User Name</p:outputLabel>
+                            </div>
+                            <div class="col-75" >
+                                <p:inputText id="username" value="#{accountController.username}"
+                                             required="true" requiredMessage="Please enter your answer to the security question!" >
+                                </p:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <p:commandButton id="submit" value="Submit" icon="fas fa-arrow-up" styleClass="rounded-button" update="recoveryForm"
+                                             actionListener="#{accountController.recoverAccount()}"/> &nbsp;&nbsp;
+                        </div>
+                    </c:if>
+                    <c:if test="#{accountController.account.username != null}">
+                        <h1>Please Answer Your Security Question</h1>
+                        <div class="row">
+                            <label for="answer" style="font-weight: bold">#{accountController.account.securityQuestion} ?</label>
+                        </div>
+                        <div class="row">
+                            <p:inputText id="answer" value="#{accountController.securityAnswer}"
+                                         required="true" requiredMessage="Please enter your answer to the security question!" />
+                        </div>
+                        <br /><br/>
+                        <div class="row" >
+                        <!--
+                       ================================
+                       |         SUBMIT Button        |
+                       ================================
+                       -->
+                        <p:commandButton id="recover" value="Submit" icon="fas fa-arrow-up" styleClass="rounded-button"
+                                         ajax="false" action="#{accountController.securityAnswerSubmit()}"/> &nbsp;&nbsp;
+                        <!--
+                       ================================
+                       |         Cancel Button        |
+                       ================================
+                       -->
+                        <p:button outcome="/account/signIn" value="Cancel" icon="fas fa-ban" styleClass="ui-button-outlined" />
+                        </div>
+                    </c:if>
+
+                </h:form>
+            </div>
+        </ui:define>
+    </ui:composition>
+</html>

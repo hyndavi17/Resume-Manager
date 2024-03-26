@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core">
+
+<ui:composition>
+    <!--
+        *******************************************
+        Dialog pop-up window to edit an education
+        *******************************************
+        height="400" makes the dialog window to be vertically scrollable
+        width="60%" and responsive="true" make the dialog window horizontally responsive
+        class="scalableImage" makes the displayed image responsive
+        -->
+        <p:dialog id="educationDlg" header="Education" widgetVar="educationDialog"
+                  modal="true" position="center" appendTo="@(body)"
+                  showEffect="slide" hideEffect="fade" responsive="true" width="80%" height="500" >
+            <div align="center">
+                <h:form id="educationForm" class="ui-datatable-data">
+                    <div class="row" >
+                        <div class="col-25">
+                            <p:outputLabel for="institute">Institute: </p:outputLabel>
+                        </div>
+                        <div class="col-75" >
+                            <p:inputText type="text" id="institute" name="institute" placeholder="Institute name.." value="#{ profileController.currentEducation.instituteName}" required="true" requiredMessage="Please enter a valid institution name!" validatorMessage="Invalid institution name">
+
+                                <!-- Length Constraint: Adjust min and max as per your requirement -->
+                                <f:validateLength minimum="1" maximum="32" />
+
+                                <!-- Regular Expression: Allows alphabetic characters, spaces, and hyphens -->
+                                <f:validateRegex pattern="^[A-Za-z- ]+$" />
+
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-25">
+                            <p:outputLabel for="degree">Degree: </p:outputLabel>
+                        </div>
+                        <div class="col-75" >
+                            <p:inputText type="text" id="degree" name="degree" placeholder="Degree .." value="#{profileController.currentEducation.degree}" required="true" requiredMessage="Please enter a valid degree name!" validatorMessage="Invalid degree name">
+
+                                <!-- Length Constraint: Adjust min and max as per your requirement -->
+                                <f:validateLength minimum="1" maximum="32" />
+
+                                <!-- Regular Expression: Allows alphabetic characters, spaces, and hyphens -->
+                                <f:validateRegex pattern="^[A-Za-z- ]+$" />
+
+                            </p:inputText>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-25">
+                            <p:outputLabel for="startDate">Start Date: </p:outputLabel>
+                        </div>
+                        <div class="col-75" >
+                            <p:datePicker id="startDate" name="startDate" value="#{profileController.currentEducation.startDate}"  required="true" requiredMessage="Please enter a valid start date!"
+                                          maxdate="#{profileController.getToday()}"
+                                          pattern="MM/dd/yyyy">
+                            </p:datePicker>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-25">
+                            <p:outputLabel for="graduationDate">Graduation Date/Expected: </p:outputLabel>
+                        </div>
+                        <div class="col-75" >
+                            <p:datePicker id="graduationDate" name="graduationDate" value="#{profileController.currentEducation.graduationDate}"  required="true" requiredMessage="Please enter a valid graduation date!"
+                                          maxdate="#{profileController.getToday()}"
+                                          pattern="MM/dd/yyyy">
+                            </p:datePicker>
+                        </div>
+                    </div>
+                    <div class="row" >
+                        <div class="col-25">
+                            <p:outputLabel for="description">Description: </p:outputLabel>
+                        </div>
+                        <div class="col-75" >
+                            <p:inputTextarea id="description" name="description" value="#{profileController.currentEducation.description}" />
+                        </div>
+                    </div>
+                    <br /><br />
+                    <div class="row">
+                        <div class="col-25">
+                        </div>
+                        <div class="col-75">
+                            <p:commandButton value="Save" icon="fas fa-save"
+                                             ajax="false" actionListener="#{profileController.saveEducation()}"
+                                             update=":UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                                             oncomplete="handleSubmit(args, 'educationDialog');"/>&nbsp;
+                            <p:commandButton value = "Cancel" onclick="PF('educationDialog').hide()"  />
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </p:dialog>
+    </ui:composition>
+</html>

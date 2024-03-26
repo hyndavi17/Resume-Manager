@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="editableContent">
+        <div class="card" align="center">
+            <p:galleria value="#{homeController.listOfPhotos}" var="aPhoto" numVisible="7"
+                        responsiveOptions="#{homeController.responsiveOptions1}"
+                        circular="true" autoPlay="true" transitionInterval="4000"
+                        showCaption="true" style="max-width: 800px">
+
+                <p:graphicImage value="#{aPhoto.regularPhotoFilepath}" alt="#{aPhoto.title}" style="width: 100%; display: block;" />
+
+                <f:facet name="caption">
+                    <span class="p-mb-2">#{aPhoto.title}</span>
+                </f:facet>
+
+                <f:facet name="thumbnail">
+                    <p:graphicImage value="#{aPhoto.thumbnailPhotoFilepath}" alt="#{aPhoto.title}" style="display: block;" />
+                </f:facet>
+
+            </p:galleria>
+        </div>
+    </ui:define>
+</ui:composition>
+
+</html>

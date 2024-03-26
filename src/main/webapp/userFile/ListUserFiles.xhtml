@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="#{userController.signedInUser.firstName}'s Files"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{userController.userIsSignedIn() == true}">
+            <div align="center">
+                <h:form id="UserFileListForm">
+                    <p:panel header="#{userController.signedInUser.firstName}&nbsp;#{userController.signedInUser.lastName}'s Files">
+                        <p:dataTable id="datalist"
+                                     value="#{userFileController.listOfUserFiles}"
+                                     var="aUserFile"
+                                     widgetVar="userFilesDataTable"
+                                     selectionMode="single"
+                                     selection="#{userFileController.selected}"
+                                     reflow="true"
+                                     showGridlines="true"
+                                     paginator="true"
+                                     rowKey="#{aUserFile.id}"
+                                     rows="5"
+                                     rowIndexVar="rowNumber"
+                                     rowsPerPageTemplate="5,10,20,30,40,50"
+                                     first="#{userFileController.selectedRowNumber}">
+
+                            <p:ajax event="rowSelect"
+                                    update="uploadButton downloadButton deleteButton displayButton playButton">
+                                    #{userFileController.setSelectedRowNumber(rowNumber)};
+                            </p:ajax>
+
+                            <p:ajax event="rowUnselect"
+                                    update="uploadButton downloadButton deleteButton displayButton playButton"/>
+
+                            <!--
+                            =========================================================================
+                            To show the previously selected row when the user comes back to this page
+                            =========================================================================
+                            Step 1: Include the following above:
+
+                                    rowIndexVar="rowNumber"
+                                    first="#{userFileController.selectedRowNumber}"
+                                        identifies the row number to show when this page reloads
+
+                            Step 2: With <p:ajax event="rowSelect"> above, set the selectedRowNumber
+                                    instance variable by using the setter method.
+
+                            Step 3: Declare the instance variable selectedRowNumber and create the
+                                    getter and setter methods for it in UserFileController.java.
+                            -->
+
+                            <!--
+                            ********************************
+                            *        FILE ID column        *
+                            ********************************
+                            -->
+                            <p:column sortBy="#{aUserFile.id}" headerText="File Id" style="width:80px;">
+                                <div align="center"><h:outputText value="#{aUserFile.id}"/></div>
+                            </p:column>
+
+                            <!--
+                            ********************************
+                            *     FILE TYPE column     *
+                            ********************************
+                            -->
+                            <p:column headerText="File Type" style="width:80px;">
+                                <div align="center">
+                                    <h:graphicImage class="previewImage"
+                                                    value="#{userFileController.fileTypeIcon(aUserFile.id)}"/>
+                                </div>
+                            </p:column>
+
+                            <!--
+                            ********************************
+                            *        FILE NAME column      *
+                            ********************************
+                            -->
+                            <p:column sortBy="#{aUserFile.filename}" headerText="File Name">
+                                <h:outputText value="#{userFileController.cleanedFilenameForFileId(aUserFile.id)}"/>
+                            </p:column>
+
+                            <!--
+                            ********************************
+                            *        USER ID column        *
+                            ********************************
+                            -->
+                            <p:column headerText="User Id" style="width:60px;">
+                                <div align="center"><h:outputText value="#{aUserFile.userId}"/></div>
+                            </p:column>
+
+                            <!--
+                            ********************************
+                            *       USER PHOTO column      *
+                            ********************************
+                            -->
+                            <p:column headerText="User Photo" style="width:100px;">
+                                <div align="center">
+                                    <h:graphicImage class="smallProfilePhoto" value="#{userController.userPhoto()}"/>
+                                </div>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <div align="center">
+                                    <!--
+                                    ================================
+                                    |      UPLOAD FILE Button      |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="uploadButton" value="Upload File" icon="fas fa-upload"
+                                                     styleClass="rounded-button"
+                                                     update=":UserFileListForm"
+                                                     action="/userFile/UploadFile?faces-redirect=true"/>
+                                    &nbsp;
+                                    <!--
+                                    ================================
+                                    |     DOWNLOAD FILE Button     |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="downloadButton" value="Download File" icon="fas fa-download"
+                                                     styleClass="rounded-button"
+                                                     ajax="false" disabled="#{empty userFileController.selected}">
+
+                                        <p:fileDownload value="#{fileDownloadManager.file}"/>
+                                    </p:commandButton>
+                                    &nbsp;
+                                    <!--
+                                    ***************************************************
+                                    Display a Confirmation dialog for the DELETE button
+                                    ***************************************************
+                                    -->
+                                    <!--
+                                    ================================
+                                    |      DELETE FILE Button      |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="deleteButton" value="Delete File" icon="fas fa-trash-alt"
+                                                     styleClass="rounded-button"
+                                                     actionListener="#{userFileController.deleteSelectedUserFile()}"
+                                                     update=":UserFileListForm" ajax="true"
+                                                     disabled="#{empty userFileController.selected}">
+
+                                        <p:confirm header="Deletion Confirmation"
+                                                   message="Are you sure you want to permanently delete the selected file from the database?"/>
+                                    </p:commandButton>
+
+                                    <p:confirmDialog id="confirmDialogBox" global="true" showEffect="fade"
+                                                     hideEffect="fade" responsive="true" width="350">
+                                        <div align="center">
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no"
+                                                             icon="fas fa-window-close"/>
+                                            &nbsp;
+                                            <p:commandButton value="Yes" type="button"
+                                                             class="ui-confirmdialog-yes ui-button-danger"
+                                                             icon="fas fa-check-square"/>
+                                        </div>
+                                    </p:confirmDialog>
+                                    <!--
+                                    ************************************************
+                                    End of Display of the DELETE Confirmation dialog
+                                    ************************************************
+                                    -->
+                                    &nbsp;
+                                    <!--
+                                    ================================
+                                    |     DISPLAY FILE Button      |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="displayButton" value="Display File" icon="fas fa-file-alt"
+                                                     styleClass="rounded-button"
+                                                     action="/userFile/DisplayFile?faces-redirect=true"
+                                                     ajax="false" disabled="#{empty userFileController.selected}"/>
+                                    &nbsp;
+                                    <!--
+                                    ================================
+                                    |    PLAY VIDEO FILE Button    |
+                                    ================================
+                                    -->
+                                    <p:commandButton id="playButton" value="Play Video File" icon="fas fa-play"
+                                                     styleClass="rounded-button"
+                                                     action="/userFile/PlayVideo?faces-redirect=true"
+                                                     ajax="false" disabled="#{empty userFileController.selected}"/>
+
+                                </div>
+                            </f:facet>
+                        </p:dataTable>
+                    </p:panel>
+                </h:form>
+            </div>
+        </c:if>
+        <c:if test="#{userController.userIsSignedIn() == false}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+<!-- Do not enter tags after the composition line since they are ignored by JSF -->
+</html>

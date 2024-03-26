@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Delete Account"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{accountController.userIsSignedIn() == true}">
+            <div align="center" style="width:50%; margin:0 auto;">
+                <h:form>
+                    <br/><br/>
+                    <h1>Are You Sure to Permanently Delete Your Account?</h1>
+                    <br/>
+                    <!-- fieldset is an HTML tag that draws a box around the content enclosed within it -->
+                    <fieldset>
+                        <!--
+                        When the user selects YES on the confirmDialogBox, SecurityQuestionDialog included below is
+                        displayed, and the form with id SecurityQuestionForm in the SecurityQuestionDialog is updated.
+                        -->
+                        <p:commandLink oncomplete="PF('SecurityQuestionDialog').show()" update=":SecurityQuestionForm">
+                            <br/>
+                            <label style="font-size: 12pt;">
+                                <i class="fas fa-trash-alt"/>&nbsp;Delete Account
+                            </label>
+                            <br/><br/>
+                            <p:confirm header="Account Deletion Confirmation"
+                                       message="Are you sure to permanently delete your account? This cannot be undone!"/>
+                        </p:commandLink>
+                        <!--
+                        The confirmation dialog is displayed to check if the user really wants to delete the account.
+                        -->
+                        <p:confirmDialog id="confirmDialogBox" global="true" showEffect="fade" hideEffect="fade"
+                                         responsive="true" width="350">
+                            <div align="center">
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no"
+                                                 icon="fas fa-window-close"/>
+                                &nbsp;
+                                <p:commandButton value="Yes" type="button"
+                                                 class="ui-confirmdialog-yes ui-button-danger"
+                                                 icon="fas fa-check-square"/>
+                            </div>
+                        </p:confirmDialog>
+                    </fieldset>
+                    <br/><br/>
+                    <!--
+                    ================================
+                    |         CANCEL Button        |
+                    ================================
+                    -->
+                    <p:button outcome="/userAccount/Profile" value="Cancel" icon="fas fa-ban"
+                              styleClass="ui-button-outlined"/>
+                    <br/>
+                </h:form>
+            </div>
+        </c:if>
+        <c:if test="#{accountController.userIsSignedIn() == false}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+        <!--
+        =================================================================
+        Dialog for Security Question and Answer for User Account Deletion
+        =================================================================
+        -->
+        <p:dialog id="SecurityQuestionDlg" header="Security Question" widgetVar="SecurityQuestionDialog"
+                  modal="true" width="50%" position="center" appendTo="@(body)"
+                  showEffect="blind" hideEffect="fade" responsive="true">
+
+            <div align="center">
+                <h:form id="SecurityQuestionForm">
+                    <fieldset style="background-color: oldlace !important;">
+                        <div style="margin-bottom:20px">
+                            <h:outputLabel for="answer" value="#{accountController.signedInUser.securityQuestion}"/>
+                        </div>
+
+                        <div style="margin-bottom:10px">
+                            <p:inputText id="answer" value="#{accountController.securityAnswer}"
+                                         style="width: 290px" required="true"
+                                         requiredMessage="Please enter your answer to the security question!"/>
+                        </div>
+                        <br/>
+                        <!--
+                        ================================
+                        |         SUBMIT Button        |
+                        ================================
+                        -->
+                        <p:commandButton id="Submit" value="Submit" icon="fas fa-arrow-up"
+                                         styleClass="rounded-button"
+                                         ajax="false" action="#{accountController.securityAnswerSubmit()}"
+                                         update=":growlInfoMessage, :growlErrorMessage, :growlFatalMessage, :growlWarningMessage"
+                                         oncomplete="PF('SecurityQuestionDialog').hide()"/>
+                        &nbsp;
+                        <!--
+                        ================================
+                        |        CANCEL Button         |
+                        ================================
+                        -->
+                        <p:commandButton id="cancel" value="Cancel" icon="fas fa-ban"
+                                         styleClass="ui-button-outlined"
+                                         immediate="true" oncomplete="PF('SecurityQuestionDialog').hide()"/>
+                        <br/>
+                    </fieldset>
+                </h:form>
+            </div>
+        </p:dialog>
+
+    </ui:define>
+</ui:composition>
+</html>

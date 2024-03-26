@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+>
+
+<ui:composition>
+    <!--
+    ===================================================================
+    |  Clicking the CREATE button in List.xhtml displays this Dialog  |
+    |  window for the user to enter the data to create a new project.     |
+    ===================================================================
+    -->
+    <p:dialog id="ProjectCreateDlg" header="Create New Project" widgetVar="ProjectCreateDialog"
+              modal="true" position="center" appendTo="@(body)" width="55%" height="300"
+              showEffect="slide" hideEffect="fade" responsive="true">
+        <!--
+        Various effect options can be used when showing and closing the dialog.
+        Use showEffect and hideEffect options to apply these effects:
+            blind, bounce, clip, drop, explode, fade, fold, highlight, puff,
+            pulsate, scale, shake, size, slide and transfer. [PrimeFaces Documentation]
+        -->
+
+        <h:form id="ProjectCreateForm" >
+            <!--
+             ******************************
+             *   Create Project Proposal  *
+             ******************************
+            -->
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel for="name">Name</p:outputLabel>
+                    </div>
+                    <div class="col-75">
+                        <p:inputText type="text" id="name" name="name" placeholder="Enter project name " value="#{projectsController.selected.name}" requiredMessage="Project Name is required" rendered="true"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel for="client">Client</p:outputLabel>
+                    </div>
+                    <div class="col-75">
+                        <p:inputText type="text" id="client" name="client" placeholder="Enter client name.." value="#{projectsController.selected.client}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel for="description">Description</p:outputLabel>
+                    </div>
+                    <div class="col-75">
+                        <p:inputTextarea id="description" name="description" placeholder="Enter a breif description.." value="#{projectsController.selected.description}"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-25">
+                        <p:outputLabel for="proposalDate">Proposal Date</p:outputLabel>
+                    </div>
+                    <div class="col-75">
+                        <p:datePicker id="proposalDate" value="#{projectsController.selected.proposalDate}"/>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+
+                    <div class="col-25">
+                    </div>
+                    <div class="col-75">
+                        <!--
+                        ================================
+                        |        SUBMIT Button         |
+                        ================================
+                        -->
+                        <p:commandButton id="createAccount" value="Create" icon="fas fa-arrow-up" styleClass="rounded-button"
+                                         ajax="false" action="#{projectsController.create()}"/>
+                        &nbsp;&nbsp;
+                        <!--
+                        ================================
+                        |        CANCEL Button         |
+                        ================================
+                        -->
+                        <p:button outcome="/projects/list" value="Cancel" icon="fas fa-ban" styleClass="ui-button-outlined"/>
+                    </div>
+                </div>
+        </h:form>
+    </p:dialog>
+</ui:composition>
+</html>

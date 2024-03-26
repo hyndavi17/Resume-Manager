@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="Edit Account"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{accountController.userIsSignedIn() == true}">
+            <div align="center">
+                <h:form id="EditAccountProfileForm">
+                    <h1>Edit Account Profile</h1>
+                    <table border="0" align="center" cellpadding="5" cellspacing="0">
+                        <tbody>
+
+                        <!--
+                        ********************************
+                        *         EMAIL ADDRESS        *
+                        ********************************
+                        -->
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <p:outputLabel value="Email:" for="email"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <p:inputText id="email" value="#{accountController.signedInUser.email}"
+                                             required="true" requiredMessage="Email address is required!">
+                                    <f:validateLength minimum="2"/>
+                                    <f:validator validatorId="emailValidator"/>
+                                </p:inputText>
+                            </td>
+                        </tr>
+                        <!--
+                        ********************************
+                        *           USERNAME           *
+                        ********************************
+                        Username is listed in an uneditable mode and cannot be changed
+                        -->
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <h:outputText value="Username:"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <h:outputText value="#{accountController.signedInUser.username}"/>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <!--
+                    *********************************
+                    *   TWO-FACTOR AUTHENTICATION   *
+                    *********************************
+                    -->
+                    <p:fieldset id="twoFAgroup" legend="Two-Factor Authentication" toggleable="true" toggleSpeed="500">
+                        <table border="0" align="center" cellpadding="5" cellspacing="0">
+                        <tbody>
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <p:outputLabel value="Two-Factor Authentication via Email:" for="twoFAEmail"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <p:toggleSwitch id="twoFAEmail" value="#{accountController.twoFAonViaEmail}">
+                                    <p:ajax update="twoFAgroup"/>
+                                </p:toggleSwitch>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <p:outputLabel value="Two-Factor Authentication via SMS:" for="twoFAsms"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <p:toggleSwitch id="twoFAsms" value="#{accountController.twoFAonViaSMS}">
+                                    <p:ajax update="twoFAgroup"/>
+                                </p:toggleSwitch>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <p:outputLabel for="cellPhoneNumber" value="Cell Phone Number:"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <!--
+                                PrimeFaces inputMask enforces the phone number format defined by mask="(999) 999-9999"
+                                and prevents a non-numeric character to be entered by the user.
+                                -->
+                                <p:inputMask id="cellPhoneNumber" mask="(999) 999-9999"
+                                             value="#{accountController.signedInUser.cellPhoneNumber}"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td align="right" valign="middle" nowrap="nowrap" bgcolor="papayawhip">
+                                <p:outputLabel for="carrier" value="Cell Phone Carrier:"/>
+                            </td>
+                            <td align="left" valign="middle" nowrap="nowrap" bgcolor="oldlace">
+                                <p:selectOneMenu id="carrier" value="#{accountController.signedInUser.cellPhoneCarrier}">
+
+                                    <f:selectItem itemLabel="Select a Carrier"  itemValue="" noSelectionOption="true"/>
+                                    <f:selectItem itemLabel="AT&amp;T Mobility" itemValue="mms.att.net" />
+                                    <f:selectItem itemLabel="Boost Mobile"      itemValue="myboostmobile.com" />
+                                    <f:selectItem itemLabel="Consumer Cellular" itemValue="mailmymobile.com" />
+                                    <f:selectItem itemLabel="Cricket Wireless"  itemValue="mms.cricketwireless.net" />
+                                    <f:selectItem itemLabel="Google Project Fi" itemValue="msg.fi.google.com" />
+                                    <f:selectItem itemLabel="Sprint"            itemValue="pm.sprint.com" />
+                                    <f:selectItem itemLabel="Straight Talk"     itemValue="mypixmessages.com" />
+                                    <f:selectItem itemLabel="T-Mobile"          itemValue="tmomail.net" />
+                                    <f:selectItem itemLabel="Tracfone"          itemValue="mmst5.tracfone.com" />
+                                    <f:selectItem itemLabel="U.S. Cellular"     itemValue="mms.uscc.net" />
+                                    <f:selectItem itemLabel="Verizon"           itemValue="vzwpix.com" />
+                                    <f:selectItem itemLabel="Virgin Mobile"     itemValue="vmpix.com" />
+                                    <f:selectItem itemLabel="Xfinity Mobile"    itemValue="mypixmessages.com" />
+
+                                </p:selectOneMenu>
+                            </td>
+                        </tr>
+                        </tbody>
+                        </table>
+                    </p:fieldset>
+                    <br/><br/>
+                    <!--
+                    ================================
+                    |          SAVE Button         |
+                    ================================
+                    -->
+                    <p:commandButton id="submit" value="Save" icon="fas fa-save" styleClass="rounded-button"
+                                     ajax="false" action="#{accountController.updateAccount()}"/>
+                    &nbsp;
+                    <!--
+                    ================================
+                    |         CANCEL Button        |
+                    ================================
+                    -->
+                    <p:button outcome="/userAccount/Profile" value="Cancel"
+                              icon="fas fa-ban" styleClass="ui-button-outlined"/>
+                    <br/><br/>
+                </h:form>
+            </div>
+        </c:if>
+        <c:if test="#{accountController.userIsSignedIn() == false}">
+            <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+</html>

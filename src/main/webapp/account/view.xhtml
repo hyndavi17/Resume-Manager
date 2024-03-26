@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  - Created by Osman Balci on 2023.9.14
+  - Copyright © 2023 Osman Balci. All rights reserved.
+  -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:f="jakarta.faces.core"
+      xmlns:c="jakarta.tags.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<!-- This page is constructed based on the siteTemplate -->
+<ui:composition template="/template/siteTemplate.xhtml">
+
+    <ui:define name="title">
+        <!-- Set the page title -->
+        <h:outputText value="View Account"/>
+    </ui:define>
+
+    <!-- Create the content for this page below -->
+    <ui:define name="editableContent">
+        <c:if test="#{accountController.userIsSignedIn()}">
+        <div align="center">
+            <h:form id="ViewAccountForm"  class="container" >
+                <h1>View Account</h1>
+                <!--
+                 **************************
+                 *   Create User Account  *
+                 **************************
+                -->
+                <p:fieldset id="accountInfoGroup" legend="Account Infomation" toggleable="true" toggleSpeed="500">
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="email">Email</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:outputLabel id="email" style="float: left" value="#{accountController.account.email}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="username">Username</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:outputLabel id="username" style="float: left" value="#{accountController.account.username}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="securityQuestion">Security Question</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:outputLabel id="securityQuestion" style="float: left" value="#{accountController.account.securityQuestion}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel for="securityAnswer">Security Answer</p:outputLabel>
+                        </div>
+                        <div class="col-75">
+                            <p:outputLabel id="securityAnswer" style="float: left" value="#{accountController.account.securityAnswer}"/>
+                        </div>
+                    </div>
+                </p:fieldset>
+                <!--
+                *********************************
+                *   TWO-FACTOR AUTHENTICATION   *
+                *********************************
+                -->
+                <p:fieldset id="twoFAgroup" legend="Two-Factor Authentication" toggleable="true" toggleSpeed="500">
+                    <div class="row">
+                        <div class="col-50">
+                            <p:outputLabel value="Two-Factor Authentication via Email:" for="twoFAEmail"/>
+                        </div>
+                        <div class="col-50">
+                            <p:toggleSwitch id="twoFAEmail" value="#{accountController.twoFAonViaEmail}">
+                                <p:ajax update="twoFAgroup"/>
+                            </p:toggleSwitch>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-50">
+                            <p:outputLabel value="Two-Factor Authentication via SMS:" for="twoFASMS"/>
+                        </div>
+                        <div class="col-50">
+                            <p:toggleSwitch id="twoFASMS" value="#{accountController.twoFAonViaSMS}">
+                                <p:ajax update="twoFAgroup"/>
+                            </p:toggleSwitch>
+                        </div>
+                    </div>
+
+                    <div class="row" >
+                        <div class="col-25">
+                            <p:outputLabel value="Cell Phone Number:" for="cellPhoneNumber"/>
+                        </div>
+                        <div class="col-75">
+                            <p:outputLabel style="float: left"  id="cellPhoneNumber" mask="(999) 999-9999"
+                                         value="#{accountController.account.cellPhoneNumber}"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-25">
+                            <p:outputLabel value="Cell Phone Carrier:" for="carrier"/>
+                        </div>
+                        <div class="col-75">
+                            <!--
+                                All major U.S. wireless carriers offer both Short Message Service (SMS) gateway
+                                and Multimedia Messaging Service (MMS) gateway.
+
+                                Carrier	            SMS Gateway Domain	                MMS Gateway Domain
+                                AT&T	            number@txt.att.net	                number@mms.att.net
+                                Boost Mobile	    number@sms.myboostmobile.com	    number@myboostmobile.com
+                                Cricket Wireless	number@mms.cricketwireless.net	    number@mms.cricketwireless.net
+                                Google Project Fi	number@msg.fi.google.com	        number@msg.fi.google.com
+                                Republic Wireless	number@text.republicwireless.com	None
+                                Sprint	            number@messaging.sprintpcs.com	    number@pm.sprint.com
+                                Straight Talk	    number@vtext.com	                number@mypixmessages.com
+                                T-Mobile	        number@tmomail.net	                number@tmomail.net
+                                Ting	            number@message.ting.com	None
+                                Tracfone	        Depends on underlying carrier	    number@mmst5.tracfone.com
+                                U.S. Cellular	    number@email.uscc.net	            number@mms.uscc.net
+                                Verizon	            number@vtext.com	                number@vzwpix.com
+                                Virgin Mobile	    number@vmobl.com	                number@vmpix.com
+                                Xfinity Mobile      number@vtext.com                    number@mypixmessages.com
+
+                                SMS message is restricted to be no more than 160 characters.
+                                MMS has no restriction. Therefore, we will use MMS.
+
+                                Specify the email address to send the email message containing the text message as
+
+                                    10-digit Cell Phone Number@CellPhoneCarrier's MMS gateway domain
+
+                                The designated cell phone number will be charged for the text messaging by its carrier.
+
+                                When the email message is sent to the cell phone number @ the MMS gateway domain,
+                                the message is automatically sent to the cell phone as an MMS text message by the
+                                domain and the carrier charges the cell phone number for the text messaging.
+                                -->
+
+                            <p:outputLabel id="carrier" value="#{accountController.cellPhoneCarrier}" />
+                        </div>
+                    </div>
+                </p:fieldset>
+                <br /><br />
+                <!--
+                ================================
+                |        Edit Button         |
+                ================================
+                -->
+                <p:commandButton id="editButton" value="Edit" icon="fas fa-pencil" styleClass="rounded-button"
+                                 ajax="false" action="#{accountController.prepareForEdit()}"/>
+                &nbsp;&nbsp;
+                <!--
+                ================================
+                |        CANCEL Button         |
+                ================================
+                -->
+                <p:button outcome="/index" value="Cancel" icon="fas fa-ban" styleClass="ui-button-outlined"/>
+            </h:form>
+        </div>
+        </c:if>
+        <c:if test="#{!accountController.userIsSignedIn()}">
+        <div align="center"><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+    </ui:define>
+</ui:composition>
+</html>

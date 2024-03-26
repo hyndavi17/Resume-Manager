@@ -1,0 +1,954 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:ui="jakarta.faces.facelets"
+  xmlns:h="jakarta.faces.html"
+  xmlns:c="jakarta.tags.core"
+  xmlns:f="jakarta.faces.core"
+  xmlns:p="http://primefaces.org/ui"
+>
+  <!-- This page is constructed based on the siteTemplate -->
+  <ui:composition template="/template/siteTemplate.xhtml">
+    <ui:define name="title">
+      <!-- Set the page title -->
+      <h:outputText value="My Profule" />
+    </ui:define>
+
+    <ui:define name="editableContent">
+      <div align="center">
+        <c:if test="#{accountController.userIsEmployee()}">
+          <h:form
+            id="UserProfileForm"
+            class="container"
+            enctype="multipart/form-data"
+          >
+            <!--
+                    **********************
+                    *   User's Profile   *
+                    **********************
+                    -->
+            <c:if test="#{profileController.currentProfile.isFirstTime()}">
+              <h1>Setup Your Profile</h1>
+            </c:if>
+            <c:if test="#{!profileController.currentProfile.isFirstTime()}">
+              <h1>
+                #{profileController.currentProfile.basicInfo.fullName}'s Profile
+              </h1>
+            </c:if>
+
+            <!--
+                    USER'S PROFILE PHOTO: Display the user's account profile photo in a circle.
+                    The cache="false" option enables immediate display of a newly uploaded photo without using cache.
+                    -->
+            <p:fieldset
+              id="profilePic"
+              toggleable="false"
+              toggleSpeed="500"
+              style="position: relative"
+            >
+              <c:if test="#{!profileController.editPicture}">
+                <p:commandButton
+                  value=""
+                  update="UserProfileForm"
+                  actionListener="#{profileController.enablePicture()}"
+                  styleClass="edit-btn"
+                  class="fa fa-pencil"
+                />
+                <p:graphicImage
+                  cache="false"
+                  id="output"
+                  width="200"
+                  styleClass="profilePhoto"
+                  value="#{profileController.currentProfile.profilePicture}"
+                  rendered="#{profileController.currentProfile.account.profilePicture!=null}"
+                />
+              </c:if>
+              <c:if test="#{profileController.editPicture}">
+                <p class="titleSmall">
+                  Click Choose File to select an existing photo on your computer
+                  and then click Upload to upload it
+                </p>
+                <br />
+                <!--
+                            p:fileUpload uploads the selected file and stores it into "private UploadedFile file" of userPhotoController.
+                            -->
+                <p:fileUpload
+                  id="file"
+                  value="#{accountController.file}"
+                  mode="simple"
+                />
+                <br /><br />
+                <!--
+                            ================================
+                            |        UPLOAD Button         |
+                            ================================
+                            After the file is uploaded by p:fileUpload above, we invoke userPhotoController.upload()
+                            to store the uploaded file into the UserPhotoStorage external directory.
+                            -->
+                <p:commandButton
+                  id="upload"
+                  value="Upload"
+                  icon="fas fa-upload"
+                  styleClass="rounded-button"
+                  ajax="false"
+                  action="#{accountController.upload()}"
+                  update="UserProfileForm"
+                />
+                <!--
+                            ================================
+                            |        CANCEL Button         |
+                            ================================
+                            -->
+                <p:commandButton
+                  id="cancel"
+                  value="Cancel"
+                  icon="fas fa-ban"
+                  styleClass="rounded-button"
+                  ajax="false"
+                  actionListener="#{profileController.disablePicture()}"
+                  update="UserProfileForm"
+                />
+              </c:if>
+            </p:fieldset>
+
+            <!--
+                    ********************************************
+                    *          Basic Info Section              *
+                    ********************************************
+                    -->
+            <p:fieldset
+              id="basicInfo"
+              legend="Basic Info"
+              toggleable="true"
+              toggleSpeed="500"
+              style="position: relative"
+            >
+              <c:if test="#{!profileController.editBasicInfo}">
+                <p:commandButton
+                  value=""
+                  update="UserProfileForm"
+                  actionListener="#{profileController.enableBasic()}"
+                  styleClass="edit-btn"
+                  class="fa fa-pencil"
+                />
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel>Name:</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <h:outputLabel
+                      value="#{profileController.currentProfile.basicInfo.fullName}"
+                      style="font-weight: normal; float: left"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel>Date of Birth:</p:outputLabel>
+                  </div>
+                  <div class="col-50">
+                    <p:outputLabel
+                      value="#{profileController.currentProfile.basicInfo.dob}"
+                      style="font-weight: normal; float: left; display: block"
+                    >
+                      <f:convertDateTime pattern="MMM dd, yyyy" />
+                    </p:outputLabel>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel>Summary:</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <h:outputLabel
+                      value="#{profileController.currentProfile.basicInfo.summary}"
+                      style="font-weight: normal; float: left"
+                    />
+                  </div>
+                </div>
+              </c:if>
+              <c:if test="#{profileController.editBasicInfo}">
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="fname">First Name</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="text"
+                      id="fname"
+                      name="firstname"
+                      placeholder="First Name.."
+                      value="#{profileController.currentProfile.basicInfo.firstName}"
+                      required="true"
+                      requiredMessage="Please enter a valid first name!"
+                      validatorMessage="Invalid first name"
+                    >
+                      <!-- Length Constraint: Adjust min and max as per your requirement -->
+                      <f:validateLength minimum="2" maximum="32" />
+
+                      <!-- Regular Expression: Allows alphabetic characters, spaces, and hyphens -->
+                      <f:validateRegex pattern="^[A-Za-z- ]+$" />
+                    </p:inputText>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="mname">Middle Name</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="text"
+                      id="mname"
+                      name="middlename"
+                      placeholder="Middle Name.."
+                      value="#{profileController.currentProfile.basicInfo.middleName}"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="lname">Last Name</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="text"
+                      id="lname"
+                      name="lastname"
+                      placeholder="Last name.."
+                      value="#{profileController.currentProfile.basicInfo.lastName}"
+                      required="true"
+                      requiredMessage="Please enter a valid last name!"
+                      validatorMessage="Invalid last name"
+                    >
+                      <!-- Length Constraint: Adjust min and max as per your requirement -->
+                      <f:validateLength minimum="1" maximum="32" />
+
+                      <!-- Regular Expression: Allows alphabetic characters, spaces, and hyphens -->
+                      <f:validateRegex pattern="^[A-Za-z- ]+$" />
+                    </p:inputText>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="dob">Date of Birth</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:datePicker
+                      id="dob"
+                      name="dob"
+                      value="#{profileController.currentProfile.basicInfo.dob}"
+                      required="true"
+                      requiredMessage="Please enter a valid DOB!"
+                      maxdate="#{profileController.getToday()}"
+                      pattern="MM/dd/yyyy"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="summary">Summary</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputTextarea
+                      type="text"
+                      id="summary"
+                      name="summary"
+                      placeholder="Summary.."
+                      value="#{profileController.currentProfile.basicInfo.summary}"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25"></div>
+                  <div class="col-75">
+                    <p:commandButton
+                      value="Save"
+                      update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                      actionListener="#{profileController.saveBasicInfo()}"
+                    />
+                    &nbsp;
+                    <p:commandButton
+                      value="Done"
+                      update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                      actionListener="#{profileController.disableBasic()}"
+                    />
+                    &nbsp;
+                  </div>
+                </div>
+              </c:if>
+            </p:fieldset>
+            <br />
+            <!--
+                ********************************************
+                *          Address information             *
+                ********************************************
+                -->
+            <p:fieldset
+              id="addressgroup"
+              legend="Address and Contact"
+              toggleable="true"
+              toggleSpeed="500"
+              rendered="#{accountController.userIsEmployee()}"
+              style="position: relative"
+            >
+              <c:if test="#{!profileController.editAddress}">
+                <p:commandButton
+                  value=""
+                  update="UserProfileForm"
+                  actionListener="#{profileController.enableAddress()}"
+                  class="fa fa-pencil"
+                />
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel>Phone No.:</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <h:outputLabel
+                      value="#{ profileController.currentProfile.address.phoneNumber}"
+                      style="font-weight: normal; float: left"
+                    />
+                    <br />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel>Email:</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <h:outputLabel
+                      value="#{profileController.currentProfile.address.email}"
+                      style="font-weight: normal; float: left"
+                    />
+                    <br />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel>Address:</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <h:outputLabel
+                      value="#{ profileController.currentProfile.address.address1}"
+                      style="font-weight: normal; float: left; clear: both"
+                    /><br />
+                    <c:if
+                      test="#{profileController.currentProfile.address.address2}"
+                    >
+                      <h:outputLabel
+                        value="#{ profileController.currentProfile.address.address2}"
+                        style="
+                          font-weight: normal;
+                          float: left;
+                          clear: both;
+                          padding-top: 0em;
+                        "
+                      /><br />
+                    </c:if>
+                    <h:outputLabel
+                      value="#{profileController.currentProfile.address.city ne '' and profileController.currentProfile.address.city ne null ? profileController.currentProfile.address.city.concat(', ') : ''}
+#{profileController.currentProfile.address.stateName ne '' and profileController.currentProfile.address.stateName ne null ? profileController.currentProfile.address.stateName.concat(', ') : ''}
+#{profileController.currentProfile.address.zipcode ne '' and profileController.currentProfile.address.zipcode ne null ? profileController.currentProfile.address.zipcode : ''}"
+                      style="
+                        font-weight: normal;
+                        float: left;
+                        clear: both;
+                        padding-top: 0em;
+                      "
+                    />
+                    <br />
+                    <h:outputLabel
+                      value="#{ profileController.currentProfile.address.country}"
+                      style="
+                        font-weight: normal;
+                        float: left;
+                        clear: both;
+                        padding-top: 0em;
+                      "
+                    />
+                  </div>
+                </div>
+              </c:if>
+              <c:if test="#{profileController.editAddress}">
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="phoneno">Phone No.</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputMask
+                      mask="(999) 999-9999"
+                      id="phoneno"
+                      name="phoneno"
+                      placeholder="Phone No.."
+                      value="#{ profileController.currentAddress.phoneNumber}"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="email">Email</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Email.."
+                      value="#{ profileController.currentAddress.email}"
+                      required="true"
+                      requiredMessage="Please enter a valid email id!"
+                    >
+                      <f:validateLength minimum="2" />
+                      <f:validator validatorId="emailValidator" />
+                    </p:inputText>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="addressLine1"
+                      >Address Line 1</p:outputLabel
+                    >
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="text"
+                      id="addressLine1"
+                      name="addressLine1"
+                      placeholder="Address Line 1.."
+                      value="#{ profileController.currentAddress.address1}"
+                      required="true"
+                      requiredMessage="Enter a valid address!"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="addressLine2"
+                      >Address Line 2</p:outputLabel
+                    >
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="text"
+                      id="addressLine2"
+                      name="addressLine2"
+                      placeholder="Address Line 2.."
+                      value="#{ profileController.currentAddress.address2}"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="city">City</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="text"
+                      id="city"
+                      name="city"
+                      placeholder="City.."
+                      value="#{ profileController.currentAddress.city} "
+                      required="true"
+                      requiredMessage="Enter a valid city!"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="state">State</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:selectOneMenu
+                      id="state"
+                      name="state"
+                      styleClass="form-control"
+                      value="#{profileController.currentAddress.stateName}"
+                    >
+                      <f:selectItems value="#{profileController.stateNames}" />
+                    </p:selectOneMenu>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="zipcode">ZipCode</p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:inputText
+                      type="text"
+                      id="zipcode"
+                      name="zipcode"
+                      placeholder="Zip Code.."
+                      value="#{ profileController.currentAddress.zipcode}"
+                      required="true"
+                      requiredMessage="Enter a valid zipcode!"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-25">
+                    <p:outputLabel for="country">Country </p:outputLabel>
+                  </div>
+                  <div class="col-75">
+                    <p:selectOneMenu
+                      id="country"
+                      name="country"
+                      styleClass="form-control"
+                      value="#{profileController.currentAddress.country}"
+                    >
+                      <f:selectItems
+                        value="#{profileController.worldCountries}"
+                      />
+                    </p:selectOneMenu>
+                  </div>
+                </div>
+                <br />
+                <div class="row">
+                  <div class="col-25"></div>
+                  <div class="col-75">
+                    <p:commandButton
+                      value="Save"
+                      update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                      actionListener="#{profileController.saveAddress()}"
+                    />
+                    &nbsp;
+                    <p:commandButton
+                      value="Done"
+                      update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                      actionListener="#{profileController.disableAddress()}"
+                    />
+                    &nbsp;
+                  </div>
+                </div>
+              </c:if>
+            </p:fieldset>
+            <br />
+
+            <!--
+                ********************************************
+                *          Educational Background          *
+                ********************************************
+                -->
+            <p:fieldset
+              id="educationgroup"
+              legend="Educational Backgound"
+              toggleable="true"
+              toggleSpeed="500"
+              style="position: relative"
+            >
+              <p:commandButton
+                value=""
+                update="UserProfileForm"
+                actionListener="#{profileController.enableEducation()}"
+                class="fa fa-pencil"
+                rendered="#{!profileController.editEducation}"
+              />
+              <c:forEach
+                items="${profileController.currentProfile.educations}"
+                var="education"
+              >
+                <div class="row">
+                  <!-- Date Column -->
+                  <div class="col-25">
+                    <p:outputLabel
+                      value="#{education.graduationDate}"
+                      style="
+                        font-size: 3em;
+                        color: gray;
+                        margin-right: 0.3em;
+                        margin-top: -0.1em;
+                      "
+                    >
+                      <f:convertDateTime pattern="yyyy" />
+                    </p:outputLabel>
+                  </div>
+                  <!-- Text Column -->
+                  <div class="col-50">
+                    <p:outputLabel
+                      value="#{education.instituteName}"
+                      style="float: left; clear: both"
+                    /><br />
+                    <p:outputLabel
+                      value="#{education.degree}"
+                      style="
+                        float: left;
+                        font-weight: normal;
+                        padding-top: 0em;
+                        clear: both;
+                        color: gray;
+                      "
+                    />
+                  </div>
+                  <!-- Buttons Column -->
+                  <div class="col-25">
+                    <p:commandButton
+                      icon="fa fa-trash"
+                      update="UserProfileForm"
+                      actionListener="#{profileController.removeEducation(education.id)}"
+                      rendered="#{profileController.editEducation}"
+                      style="background-color: white"
+                    />
+                    &nbsp;
+                    <p:commandButton
+                      icon="fa fa-pencil"
+                      update="educationForm"
+                      oncomplete="PF('educationDialog').show()"
+                      actionListener="#{profileController.setEditableEducation(education.id)}"
+                      rendered="#{profileController.editEducation}"
+                      style="background-color: white"
+                    /><br />
+                  </div>
+                </div>
+              </c:forEach>
+              <div class="row">
+                <div class="col-25"></div>
+                <div class="col-75">
+                  <!-- Add button -->
+                  <p:commandButton
+                    id="add"
+                    value="Add"
+                    actionListener="#{profileController.prepareCreateEducation()}"
+                    update=":educationForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    oncomplete="PF('educationDialog').show()"
+                    rendered="#{profileController.editEducation}"
+                  />
+                  &nbsp;
+                  <p:commandButton
+                    value="Done"
+                    update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    actionListener="#{profileController.disableEducation()}"
+                    rendered="#{profileController.editEducation}"
+                  />
+                </div>
+              </div>
+            </p:fieldset>
+
+            <!--
+                ***********************
+                *      Experience      *
+                ***********************
+                -->
+            <p:fieldset
+              id="experiencegroup"
+              legend="Experiences"
+              toggleable="true"
+              toggleSpeed="500"
+              style="position: relative"
+            >
+              <p:commandButton
+                value=""
+                update="UserProfileForm"
+                actionListener="#{profileController.enableExperience()}"
+                class="fa fa-pencil"
+                rendered="#{!profileController.editExperience}"
+              />
+              <c:forEach items="${profileController.currentProfile.experiences}" var="experience">
+                <div class="row">
+                  <!-- Date Column -->
+                  <div class="col-25">
+                    <p:outputLabel
+                            value="#{experience.endDate}"
+                            style="
+          font-size: 3em;
+          color: gray;
+          margin-right: 0.3em;
+          margin-top: -0.1em;
+        "
+                    >
+                      <f:convertDateTime pattern="yyyy" />
+                    </p:outputLabel>
+                  </div>
+                  <!-- Text Column -->
+                  <div class="col-50">
+                    <p:outputLabel
+                            value="#{experience.organization}"
+                            style="float: left; clear: both"
+                    /><br />
+                    <p:outputLabel
+                            value="#{experience.responsibilities}"
+                            style="
+          float: left;
+          font-weight: normal;
+          padding-top: 0em;
+          clear: both;
+          color: gray;
+        "
+                    />
+                  </div>
+                  <!-- Buttons Column -->
+                  <div class="col-25">
+                    <p:commandButton
+                            icon="fa fa-trash"
+                            update="UserProfileForm"
+                            actionListener="#{profileController.removeExperience(experience.id)}"
+                            rendered="#{profileController.editExperience}"
+                            style="background-color: white"
+                    />
+                    &nbsp;
+                    <p:commandButton
+                            icon="fa fa-pencil"
+                            update="experienceForm"
+                            oncomplete="PF('experienceDialog').show()"
+                            actionListener="#{profileController.setEditableExperience(experience.id)}"
+                            rendered="#{profileController.editExperience}"
+                            style="background-color: white"
+                    /><br />
+                  </div>
+                </div>
+              </c:forEach>
+              <div class="row">
+                <div class="col-25"></div>
+                <div class="col-75">
+                  <!-- Add button -->
+                  <p:commandButton
+                    id="addExperience"
+                    value="Add"
+                    actionListener="#{profileController.prepareCreateExperience()}"
+                    update=":experienceForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    oncomplete="PF('experienceDialog').show()"
+                    rendered="#{profileController.editExperience}"
+                  />
+                  &nbsp;
+                  <p:commandButton
+                    value="Done"
+                    update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    actionListener="#{profileController.disableExperience()}"
+                    rendered="#{profileController.editExperience}"
+                  />
+                </div>
+              </div>
+            </p:fieldset>
+
+            <!--
+                ***********************
+                *       Skills        *
+                ***********************
+                -->
+            <p:fieldset
+              id="skillsgroup"
+              legend="Skills"
+              toggleable="true"
+              toggleSpeed="500"
+              style="position: relative"
+            >
+              <p:commandButton
+                value=""
+                update="UserProfileForm"
+                actionListener="#{profileController.enableSkill()}"
+                class="fa fa-pencil"
+                rendered="#{!profileController.editSkill}"
+              />
+              <div class="row">
+                <div class="col-25">
+                  <p:outputLabel for="skills">Skills </p:outputLabel>
+                </div>
+                <div class="col-75">
+                  <p:autoComplete
+                    id="skills"
+                    multiple="true"
+                    value="#{profileController.currentProfile.skills}"
+                    completeMethod="#{profileController.completeSkill}"
+                    var="skill"
+                    itemLabel="#{skill.name}"
+                    itemValue="#{skill.name}"
+                    converter="#{skillConverter}"
+                    forceSelection="true"
+                    scrollHeight="250"
+                    disabled="#{!profileController.editSkill}"
+                  >
+                    <p:ajax
+                      event="itemSelect"
+                      listener="#{profileController.onSkillSelect}"
+                      update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    />
+                    <p:ajax
+                      event="itemUnselect"
+                      listener="#{profileController.onSkillUnSelect}"
+                      update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    />
+
+                    <p:column>
+                      <span style="width: 30px; height: 20px" />
+                      <h:outputText
+                        style="vertical-align: middle; margin-left: 0.5rem"
+                        value="#{skill.name}"
+                      />
+                    </p:column>
+                    <f:facet name="footer">
+                      <div
+                        class="ui-fluid"
+                        style="padding: 0.5rem 1rem 1rem 1rem"
+                      >
+                        <p:button
+                          value="Add new"
+                          onclick="alert('This could open a dialog')"
+                        />
+                      </div>
+                    </f:facet>
+                  </p:autoComplete>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-25"></div>
+                <div class="col-75">
+                  <!-- Done button -->
+                  <p:commandButton
+                    value="Done"
+                    update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    actionListener="#{profileController.disableSkill()}"
+                    rendered="#{profileController.editSkill}"
+                  />
+                </div>
+              </div>
+            </p:fieldset>
+
+            <!--
+                ***********************
+                *     Certificate     *
+                ***********************
+                -->
+            <p:fieldset
+              id="certificategroup"
+              legend="Certificates"
+              toggleable="true"
+              toggleSpeed="500"
+              style="position: relative"
+            >
+              <p:commandButton
+                value=""
+                update="UserProfileForm"
+                actionListener="#{profileController.enableCertificate()}"
+                class="fa fa-pencil"
+                rendered="#{!profileController.editCertificate}"
+              />
+              <c:forEach items="${profileController.currentProfile.certificates}" var="certificate">
+                <div class="row">
+                  <!-- Date Column -->
+                  <div class="col-25">
+                    <p:outputLabel
+                            value="#{certificate.dateObtained}"
+                            style="
+          font-size: 3em;
+          color: gray;
+          margin-right: 0.3em;
+          margin-top: -0.1em;
+        "
+                    >
+                      <f:convertDateTime pattern="yyyy" />
+                    </p:outputLabel>
+                  </div>
+                  <!-- Text Column -->
+                  <div class="col-50">
+                    <p:outputLabel
+                            value="#{certificate.name}"
+                            style="float: left; clear: both"
+                    /><br />
+                  </div>
+                  <!-- Buttons Column -->
+                  <div class="col-25" style="position: relative">
+                    <p:commandButton
+                            icon="fas fa-trash"
+                            update="UserProfileForm"
+                            actionListener="#{profileController.removeCertificate(certificate.id)}"
+                            rendered="#{profileController.editCertificate}"
+                            style="background-color: white"
+                    />
+                    &nbsp;
+                    <p:commandButton
+                            icon="fas fa-edit"
+                            update="certificateForm"
+                            oncomplete="PF('certificateDialog').show()"
+                            actionListener="#{profileController.setEditableCertificate(certificate.id)}"
+                            rendered="#{profileController.editCertificate}"
+                            style="background-color: white"
+                    /><br />
+                  </div>
+                </div>
+              </c:forEach>
+
+              <div class="row">
+                <div class="col-25"></div>
+                <div class="col-75">
+                  <!-- Add button -->
+                  <p:commandButton
+                    id="addCertificate"
+                    value="Add"
+                    actionListener="#{profileController.prepareCreateCertificate()}"
+                    update=":certificateForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    oncomplete="PF('certificateDialog').show()"
+                    rendered="#{profileController.editCertificate}"
+                  />
+                  &nbsp;
+                  <p:commandButton
+                    value="Done"
+                    update="UserProfileForm,:growlInfoMessage,:growlWarningMessage,:growlErrorMessage,:growlFatalMessage"
+                    actionListener="#{profileController.disableCertificate()}"
+                    rendered="#{profileController.editCertificate}"
+                  />
+                </div>
+              </div>
+            </p:fieldset>
+            <!--
+                ***********************
+                *     Attachments     *
+                ***********************
+                -->
+            <p:fieldset
+              id="attachmentsgroup"
+              legend="Attachments"
+              toggleable="true"
+              toggleSpeed="500"
+              style="position: relative"
+            >
+              <p:commandButton
+                value=""
+                update="UserProfileForm"
+                actionListener="#{profileController.enableAttachment()}"
+                class="fa fa-pencil"
+                rendered="#{!profileController.editAttachment}"
+              />
+              <c:forEach
+                items="${profileController.currentProfile.attachments}"
+                var="attachment"
+              >
+                <div class="row">
+                  <div class="col-75" style="position: relative">
+                    <p:outputLabel style="float: left; clear: both"
+                      >#{attachment.name}</p:outputLabel
+                    >
+                    <br />
+                  </div>
+                </div>
+              </c:forEach>
+              <div class="row">
+                <div class="col-25"></div>
+                <div class="col-75">
+                  <!-- Add button -->
+                  <p:commandButton
+                    id="editAttachments"
+                    value="Edit"
+                    action="/profile/attachment/ListAttachments.xhtml"
+                    ajax="false"
+                    rendered="#{profileController.editAttachment}"
+                  /> &nbsp;
+                  <p:commandButton
+                    value="Done"
+                    update="UserProfileForm"
+                    actionListener="#{profileController.disableAttachment()}"
+                    rendered="#{profileController.editAttachment}"
+                  />
+                </div>
+              </div>
+            </p:fieldset>
+          </h:form>
+        </c:if>
+        <c:if test="#{!accountController.userIsSignedIn()}">
+          <div><h1>Cybercriminal Activity is Detected and Rejected!</h1></div>
+        </c:if>
+      </div>
+      <ui:include src="/profile/education.xhtml" />
+      <ui:include src="/profile/experience.xhtml" />
+      <ui:include src="/profile/certificate.xhtml" />
+    </ui:define>
+  </ui:composition>
+</html>
