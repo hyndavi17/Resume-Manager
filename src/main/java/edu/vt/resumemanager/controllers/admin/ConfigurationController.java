@@ -1,7 +1,3 @@
-/*
- * Created by Hyndavi Venkatreddygari, Sai Nikhita Nayani, Yoseph Alebachew on 2023.11.20
- * Copyright © 2023 Hyndavi Venkatreddygari, Sai Nikhita Nayani, Yoseph Alebachew. All rights reserved.
- */
 
 package edu.vt.resumemanager.controllers.admin;
 

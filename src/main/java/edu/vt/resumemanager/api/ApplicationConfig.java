@@ -1,7 +1,4 @@
-/*
- * Created by Osman Balci on 2023.7.25
- * Copyright © 2023 Osman Balci. All rights reserved.
- */
+
 package edu.vt.resumemanager.api;
 
 import jakarta.ws.rs.core.Application;
