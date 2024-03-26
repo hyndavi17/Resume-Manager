@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'war'
+}
+
+group 'edu.vt'
+version '1.0'
+
+repositories {
+    // Default Maven Central repository
+    mavenCentral()
+
+    // flat filesystem directory containing the PrimeFaces JAR file
+    flatDir {
+        dirs '/Users/hyndavi/Project/ResumeManager/src/main/webapp/WEB-INF/lib'
+    }
+}
+
+dependencies {
+    // Jakarta EE 10 dependency
+    compileOnly('jakarta.platform:jakarta.jakartaee-api:10.0.0')
+    // JSON processing
+    compileOnly group:'com.google.code.gson', name:'gson', version :'2.10.1'
+
+    // imgscalr-lib-4.2.jar is a simple and efficient best practice image-scaling and manipulation library implemented in pure Java
+    // imgscalr-lib-4.2.jar is located in the flat filesystem directory defined above
+    compileOnly group: 'org.imgscalr', name: 'imgscalr-lib', version: '4.2'
+
+    // MySQL JDBC Connector to Java is configured in WildFly
+    compileOnly group: 'mysql', name: 'mysql-connector-j', version: '8.1.0'
+
+    // 13.0.0-jakarta.jar is located in the flat filesystem directory defined above
+    // 13.0.0-jakarta.jar provides UI components for Jakarta Faces
+    compileOnly group: 'org.primefaces', name: 'primefaces', version: '13.0.0-jakarta'
+
+    // For Resume templating
+    compileOnly (group: 'org.freemarker', name: 'freemarker', version: '2.3.32')
+
+    // Annotation based code generator for getter and setter methods
+    compileOnly('org.projectlombok:lombok:1.18.20')
+    annotationProcessor 'org.projectlombok:lombok:1.18.20'
+
+}
